@@ -500,17 +500,41 @@ method Reorder(CandleSet candleSet, int offset) =>
                 else
                     candleSet.tfTimerTop := label.new(left, top, tmr, color = color_transparent, textcolor = settings.htf_timer_color, style = label.style_label_down, size = settings.htf_timer_size)
 
-        if settings.label_position == 'Both' or settings.label_position == 'Bottom'
-            if not na(candleSet.tfNameBottom)
-                candleSet.tfNameBottom.set_xy(left, bottom)
+    if settings.label_position == 'Both' or settings.label_position == 'Bottom'
+        if not na(candleSet.tfNameBottom)
+            candleSet.tfNameBottom.set_xy(left, bottom)
+        else
+            candleSet.tfNameBottom := label.new(left, bottom, lbll, color = color_transparent, textcolor = settings.htf_label_color, style = label.style_label_up, size = settings.htf_label_size)
+        if settings.htf_timer_show
+            if not na(candleSet.tfTimerBottom)
+                candleSet.tfTimerBottom.set_xy(left, bottom)
             else
-                candleSet.tfNameBottom := label.new(left, bottom, lbll, color = color_transparent, textcolor = settings.htf_label_color, style = label.style_label_up, size = settings.htf_label_size)
-            if settings.htf_timer_show
-                if settings.htf_timer_show
-                    if not na(candleSet.tfTimerBottom)
-                        candleSet.tfTimerBottom.set_xy(left, bottom)
-                    else
-                        candleSet.tfTimerBottom := label.new(left, bottom, tmr, color = color_transparent, textcolor = settings.htf_timer_color, style = label.style_label_up, size = settings.htf_timer_size)
+                candleSet.tfTimerBottom := label.new(left, bottom, tmr, color = color_transparent, textcolor = settings.htf_timer_color, style = label.style_label_up, size = settings.htf_timer_size)
+
+    candleSet
+
+method RevealHistoricalActive(CandleSet candleSet) =>
+    if candleSet.candles.size() > 0
+        Candle previous = candleSet.candles.first()
+        bool prevBull = previous.c > previous.o
+        box.set_bgcolor(previous.body, prevBull ? settings.bull_body : settings.bear_body)
+        box.set_border_color(previous.body, prevBull ? settings.bull_border : settings.bear_border)
+        line.set_color(previous.wick_up, prevBull ? settings.bull_wick : settings.bear_wick)
+        line.set_color(previous.wick_down, prevBull ? settings.bull_wick : settings.bear_wick)
+        if settings.daily_name and not na(previous.dow_label)
+            previous.dow_label.set_textcolor(settings.dow_color)
+
+    candleSet
+
+method HideActive(CandleSet candleSet) =>
+    if candleSet.candles.size() > 0
+        Candle active = candleSet.candles.first()
+        box.set_bgcolor(active.body, color_transparent)
+        box.set_border_color(active.body, color_transparent)
+        line.set_color(active.wick_up, color_transparent)
+        line.set_color(active.wick_down, color_transparent)
+        if settings.daily_name and not na(active.dow_label)
+            active.dow_label.set_textcolor(color_transparent)
 
     candleSet
 
@@ -573,6 +597,7 @@ method Monitor(CandleSet candleSet) =>
                 // Get 9:30 AM New York time for today 
                 isNewHTFCandle := not na(time(timeframe.period, "0930-0931:123456", 'America/New_York')) and na(time(timeframe.period, "0930-0931:123456", 'America/New_York')[1])
     if isNewHTFCandle
+        candleSet.RevealHistoricalActive()
         Candle candle = Candle.new()
         candle.o := open
         candle.c := close
@@ -635,72 +660,73 @@ method Update(CandleSet candleSet, int offset, bool showTrace) =>
         line.set_y1(candle.wick_down, candle.l)
         line.set_y2(candle.wick_down, math.min(candle.o, candle.c))
 
-        if barstate.isrealtime or barstate.islast
-            candleSet.Reorder(offset)
-            if settings.trace_show and showTrace
-                if bar_index - candle.o_idx < 5000
-                    if na(trace.o)
-                        trace.o := line.new(candle.o_idx, candle.o, box.get_left(candle.body), candle.o, xloc = xloc.bar_index, color = settings.trace_o_color, style = helper.LineStyle(settings.trace_o_style), width = settings.trace_o_size)
-                        trace.o
+        candleSet.Reorder(offset)
+        candleSet.HideActive()
+
+        if (barstate.isrealtime or barstate.islast) and settings.trace_show and showTrace
+            if bar_index - candle.o_idx < 5000
+                if na(trace.o)
+                    trace.o := line.new(candle.o_idx, candle.o, box.get_left(candle.body), candle.o, xloc = xloc.bar_index, color = settings.trace_o_color, style = helper.LineStyle(settings.trace_o_style), width = settings.trace_o_size)
+                    trace.o
+                else
+                    line.set_xy1(trace.o, candle.o_idx, candle.o)
+                    line.set_xy2(trace.o, box.get_left(candle.body), candle.o)
+
+                if settings.label_show
+                    if na(trace.o_l)
+                        trace.o_l := label.new(box.get_right(candle.body), candle.o, str.tostring(candle.o), textalign = text.align_center, style = label.style_label_left, size = settings.label_size, color = color_transparent, textcolor = settings.label_color)
+                        trace.o_l
                     else
-                        line.set_xy1(trace.o, candle.o_idx, candle.o)
-                        line.set_xy2(trace.o, box.get_left(candle.body), candle.o)
+                        label.set_xy(trace.o_l, box.get_right(candle.body), candle.o)
+                        label.set_text(trace.o_l, str.tostring(candle.o))
 
-                    if settings.label_show
-                        if na(trace.o_l)
-                            trace.o_l := label.new(box.get_right(candle.body), candle.o, str.tostring(candle.o), textalign = text.align_center, style = label.style_label_left, size = settings.label_size, color = color_transparent, textcolor = settings.label_color)
-                            trace.o_l
-                        else
-                            label.set_xy(trace.o_l, box.get_right(candle.body), candle.o)
-                            label.set_text(trace.o_l, str.tostring(candle.o))
+            if bar_index - candle.c_idx < 5000
+                if na(trace.c)
+                    trace.c := line.new(candle.c_idx, candle.c, box.get_left(candle.body), candle.c, xloc = xloc.bar_index, color = settings.trace_c_color, style = helper.LineStyle(settings.trace_c_style), width = settings.trace_c_size)
+                    trace.c
+                else
+                    line.set_xy1(trace.c, candle.c_idx, candle.c)
+                    line.set_xy2(trace.c, box.get_left(candle.body), candle.c)
 
-                if bar_index - candle.c_idx < 5000
-                    if na(trace.c)
-                        trace.c := line.new(candle.c_idx, candle.c, box.get_left(candle.body), candle.c, xloc = xloc.bar_index, color = settings.trace_c_color, style = helper.LineStyle(settings.trace_c_style), width = settings.trace_c_size)
-                        trace.c
+                if settings.label_show
+                    if na(trace.c_l)
+                        trace.c_l := label.new(box.get_right(candle.body), candle.c, str.tostring(candle.c), textalign = text.align_center, style = label.style_label_left, size = settings.label_size, color = color_transparent, textcolor = settings.label_color)
+                        trace.c_l
                     else
-                        line.set_xy1(trace.c, candle.c_idx, candle.c)
-                        line.set_xy2(trace.c, box.get_left(candle.body), candle.c)
+                        label.set_xy(trace.c_l, box.get_right(candle.body), candle.c)
+                        label.set_text(trace.c_l, str.tostring(candle.c))
 
-                    if settings.label_show
-                        if na(trace.c_l)
-                            trace.c_l := label.new(box.get_right(candle.body), candle.c, str.tostring(candle.c), textalign = text.align_center, style = label.style_label_left, size = settings.label_size, color = color_transparent, textcolor = settings.label_color)
-                            trace.c_l
-                        else
-                            label.set_xy(trace.c_l, box.get_right(candle.body), candle.c)
-                            label.set_text(trace.c_l, str.tostring(candle.c))
+            if bar_index - candle.h_idx < 5000
+                if na(trace.h)
+                    trace.h := line.new(candle.h_idx, candle.h, line.get_x1(candle.wick_up), candle.h, xloc = xloc.bar_index, color = settings.trace_h_color, style = helper.LineStyle(settings.trace_h_style), width = settings.trace_h_size)
+                    trace.h
+                else
+                    line.set_xy1(trace.h, candle.h_idx, candle.h)
+                    line.set_xy2(trace.h, line.get_x1(candle.wick_up), candle.h)
 
-                if bar_index - candle.h_idx < 5000
-                    if na(trace.h)
-                        trace.h := line.new(candle.h_idx, candle.h, line.get_x1(candle.wick_up), candle.h, xloc = xloc.bar_index, color = settings.trace_h_color, style = helper.LineStyle(settings.trace_h_style), width = settings.trace_h_size)
-                        trace.h
+                if settings.label_show
+                    if na(trace.h_l)
+                        trace.h_l := label.new(box.get_right(candle.body), candle.h, str.tostring(candle.h), textalign = text.align_center, style = label.style_label_left, size = settings.label_size, color = color_transparent, textcolor = settings.label_color)
+                        trace.h_l
                     else
-                        line.set_xy1(trace.h, candle.h_idx, candle.h)
-                        line.set_xy2(trace.h, line.get_x1(candle.wick_up), candle.h)
+                        label.set_xy(trace.h_l, box.get_right(candle.body), candle.h)
+                        label.set_text(trace.h_l, str.tostring(candle.h))
 
-                    if settings.label_show
-                        if na(trace.h_l)
-                            trace.h_l := label.new(box.get_right(candle.body), candle.h, str.tostring(candle.h), textalign = text.align_center, style = label.style_label_left, size = settings.label_size, color = color_transparent, textcolor = settings.label_color)
-                            trace.h_l
-                        else
-                            label.set_xy(trace.h_l, box.get_right(candle.body), candle.h)
-                            label.set_text(trace.h_l, str.tostring(candle.h))
+            if bar_index - candle.l_idx < 5000
+                if na(trace.l)
+                    trace.l := line.new(candle.l_idx, candle.l, line.get_x1(candle.wick_down), candle.l, xloc = xloc.bar_index, color = settings.trace_l_color, style = helper.LineStyle(settings.trace_l_style), width = settings.trace_l_size)
+                    trace.l
+                else
+                    line.set_xy1(trace.l, candle.l_idx, candle.l)
+                    line.set_xy2(trace.l, line.get_x1(candle.wick_down), candle.l)
 
-                if bar_index - candle.l_idx < 5000
-                    if na(trace.l)
-                        trace.l := line.new(candle.l_idx, candle.l, line.get_x1(candle.wick_down), candle.l, xloc = xloc.bar_index, color = settings.trace_l_color, style = helper.LineStyle(settings.trace_l_style), width = settings.trace_l_size)
-                        trace.l
+                if settings.label_show
+                    if na(trace.l_l)
+                        trace.l_l := label.new(box.get_right(candle.body), candle.l, str.tostring(candle.l), textalign = text.align_center, style = label.style_label_left, size = settings.label_size, color = color_transparent, textcolor = settings.label_color)
+                        trace.l_l
                     else
-                        line.set_xy1(trace.l, candle.l_idx, candle.l)
-                        line.set_xy2(trace.l, line.get_x1(candle.wick_down), candle.l)
-
-                    if settings.label_show
-                        if na(trace.l_l)
-                            trace.l_l := label.new(box.get_right(candle.body), candle.l, str.tostring(candle.l), textalign = text.align_center, style = label.style_label_left, size = settings.label_size, color = color_transparent, textcolor = settings.label_color)
-                            trace.l_l
-                        else
-                            label.set_xy(trace.l_l, box.get_right(candle.body), candle.l)
-                            label.set_text(trace.l_l, str.tostring(candle.l))
+                        label.set_xy(trace.l_l, box.get_right(candle.body), candle.l)
+                        label.set_text(trace.l_l, str.tostring(candle.l))
     candleSet
 
 int cnt = 0
@@ -812,6 +838,7 @@ user_eltm = input.string(defval="30", title="Extend Session Lines Until Minute (
 user_box_line_color = input.string(defval="blue", title="Asian Range Border Color", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
 boxLineWidth = input.int(defval=1, title="Asian Box Line Width", minval=0, maxval=10)
 user_box_line_style = input.string(defval="solid", title="Asian Box Line Style", options=["solid", "dashed", "dotted"])
+show_asian_session_box = input.bool(false, title="Show Asian Session Box")
 
 sessionLineWidth = input.int(defval=2, title="Session High / Low / Mid Line Width", minval=0, maxval=20)
 user_upperlower_line_style = input.string(defval="dotted", title="Session High / Low Line Style", options=["solid", "dashed", "dotted"])
@@ -1271,35 +1298,36 @@ rth_mid = (rth_low + rth_high) / 2
 float sessionRange = na
 var label sessionRangeLabel = na
 
-// Build the Asian Box
-trl = line.new(FromDate, rth_low, ToDate, rth_low, xloc=xloc.bar_time, color=line_color, style=box_line_style, width = boxLineWidth)
-line.delete(trl[1])
+if show_asian_session_box and isBelowHourValidResolution()
+    // Build the Asian Box
+    trl = line.new(FromDate, rth_low, ToDate, rth_low, xloc=xloc.bar_time, color=line_color, style=box_line_style, width = boxLineWidth)
+    line.delete(trl[1])
 
-trh = line.new(FromDate, rth_high, ToDate, rth_high, xloc=xloc.bar_time, color=line_color, style=box_line_style, width = boxLineWidth)
-line.delete(trh[1])
+    trh = line.new(FromDate, rth_high, ToDate, rth_high, xloc=xloc.bar_time, color=line_color, style=box_line_style, width = boxLineWidth)
+    line.delete(trh[1])
 
-trm = line.new(FromDate, rth_mid, ToDate, rth_mid, xloc=xloc.bar_time, color=midline_color, style=middle_line_style, width = sessionLineWidth)
-line.delete(trm[1])
+    trm = line.new(FromDate, rth_mid, ToDate, rth_mid, xloc=xloc.bar_time, color=midline_color, style=middle_line_style, width = sessionLineWidth)
+    line.delete(trm[1])
 
-startBox = line.new(FromDate, rth_high, FromDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=line_color, style=box_line_style, width=boxLineWidth)
-line.delete(startBox[1])
+    startBox = line.new(FromDate, rth_high, FromDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=line_color, style=box_line_style, width=boxLineWidth)
+    line.delete(startBox[1])
 
-endBox = line.new(ToDate, rth_high, ToDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=line_color, style=box_line_style, width=boxLineWidth)
-line.delete(endBox[1])
-// End Section
+    endBox = line.new(ToDate, rth_high, ToDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=line_color, style=box_line_style, width=boxLineWidth)
+    line.delete(endBox[1])
+    // End Section
 
-//if not inSession and inSession[1]
+    //if not inSession and inSession[1]
 
-//Apply the High / Low / Mid Session Lines for London / NY
-tl = line.new(LineFromDate, rth_low, LineToDate, rth_low, xloc=xloc.bar_time, color=line_color, style=upperlower_line_style, width = sessionLineWidth)
-line.delete(tl[1])
+    //Apply the High / Low / Mid Session Lines for London / NY
+    tl = line.new(LineFromDate, rth_low, LineToDate, rth_low, xloc=xloc.bar_time, color=line_color, style=upperlower_line_style, width = sessionLineWidth)
+    line.delete(tl[1])
 
-th = line.new(LineFromDate, rth_high, LineToDate, rth_high, xloc=xloc.bar_time, color=line_color, style=upperlower_line_style, width = sessionLineWidth)
-line.delete(th[1])
+    th = line.new(LineFromDate, rth_high, LineToDate, rth_high, xloc=xloc.bar_time, color=line_color, style=upperlower_line_style, width = sessionLineWidth)
+    line.delete(th[1])
 
-tm = line.new(LineFromDate, rth_mid, LineToDate, rth_mid, xloc=xloc.bar_time, color=midline_color, style=middle_line_style, width = sessionLineWidth)
-line.delete(tm[1])
-// End Section
+    tm = line.new(LineFromDate, rth_mid, LineToDate, rth_mid, xloc=xloc.bar_time, color=midline_color, style=middle_line_style, width = sessionLineWidth)
+    line.delete(tm[1])
+    // End Section
 
 
 //Formula For Opening Range
@@ -3739,12 +3767,16 @@ volumesum := newSession ? volume : nz(volumesum[1]) + volume
 v2sum := newSession ? volume * hl2 * hl2 : nz(v2sum[1]) + volume * hl2 * hl2
 myvwap = volumesum != 0 ? vwapsum / volumesum : na
 dev = volumesum != 0 ? math.sqrt(math.max(v2sum / volumesum - nz(myvwap) * nz(myvwap), 0)) : na
-Coloring = not na(myvwap) and close > myvwap ? color.green : color.red
+vwapBullColor = input.color(color.new(color.green, 0), 'VWAP Bullish Color')
+vwapBearColor = input.color(color.new(color.red, 0), 'VWAP Bearish Color')
+prevwapBullColor = input.color(color.new(color.green, 0), 'Previous VWAP Bullish Color')
+prevwapBearColor = input.color(color.new(color.red, 0), 'Previous VWAP Bearish Color')
+Coloring = not na(myvwap) and close > myvwap ? vwapBullColor : vwapBearColor
 av = myvwap
 showBcol = input.bool(false, title="Show barcolors")
 showPrevVWAP = input.bool(false, title="Show previous VWAP close")
 prevwap := newSession ? myvwap[1] : prevwap[1]
-prevwapColor = not na(prevwap) and close > prevwap ? color.green : color.red
+prevwapColor = not na(prevwap) and close > prevwap ? prevwapBullColor : prevwapBearColor
 plot(showPrevVWAP and not na(prevwap) ? prevwap : na, style=plot.style_circles, color=prevwapColor)
 A = plot(av, style=plot.style_circles, color=Coloring)
 barcolor(showBcol ? Coloring : na)
