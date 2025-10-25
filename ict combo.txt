@@ -798,110 +798,110 @@ if htf6.settings.show and helper.ValidTimeframe(htf6.settings.htf) and cnt < las
 //*************************************
 
 // Get User Inputs
-user_ssth = input.string(title="Start Session Hour (EST)", defval="20", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
-user_sstm = input.string(title="Start Session Minute (EST)", defval="00", options=["00", "15", "30", "45"])
+user_ssth = input.string(defval="20", title="Start Session Hour (EST)", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
+user_sstm = input.string(defval="00", title="Start Session Minute (EST)", options=["00", "15", "30", "45"])
 
-user_esth = input.string(title="End Session Hour (EST)", defval="02", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
-user_estm = input.string(title="End Session Minute (EST)", defval="00", options=["00", "15", "30", "45"])
+user_esth = input.string(defval="02", title="End Session Hour (EST)", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
+user_estm = input.string(defval="00", title="End Session Minute (EST)", options=["00", "15", "30", "45"])
 
-user_elth = input.string(title="Extend Session Lines Until Hour (EST)", defval="11", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
-user_eltm = input.string(title="Extend Session Lines Until Minute (EST)", defval="30", options=["00", "15", "30", "45"])
+user_elth = input.string(defval="11", title="Extend Session Lines Until Hour (EST)", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
+user_eltm = input.string(defval="30", title="Extend Session Lines Until Minute (EST)", options=["00", "15", "30", "45"])
 
 
 
-user_box_line_color = input.string(title="Asian Range Border Color", defval="blue", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
-boxLineWidth = input.int(title="Asian Box Line Width", defval=1, minval=0, maxval=10)
-user_box_line_style = input.string(title="Asian Box Line Style", defval="solid", options=["solid", "dashed", "dotted"])
+user_box_line_color = input.string(defval="blue", title="Asian Range Border Color", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
+boxLineWidth = input.int(defval=1, title="Asian Box Line Width", minval=0, maxval=10)
+user_box_line_style = input.string(defval="solid", title="Asian Box Line Style", options=["solid", "dashed", "dotted"])
 
-sessionLineWidth = input.int(title="Session High / Low / Mid Line Width", defval=2, minval=0, maxval=20)
-user_upperlower_line_style = input.string(title="Session High / Low Line Style", defval="dotted", options=["solid", "dashed", "dotted"])
+sessionLineWidth = input.int(defval=2, title="Session High / Low / Mid Line Width", minval=0, maxval=20)
+user_upperlower_line_style = input.string(defval="dotted", title="Session High / Low Line Style", options=["solid", "dashed", "dotted"])
 
-user_midline_color = input.string(title="Middle Range Line Color", defval="orange", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
-user_middle_line_style = input.string(title="Middle Range Line Style", defval="dotted", options=["solid", "dashed", "dotted"])
+user_midline_color = input.string(defval="orange", title="Middle Range Line Color", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
+user_middle_line_style = input.string(defval="dotted", title="Middle Range Line Style", options=["solid", "dashed", "dotted"])
 
-user_text_color = input.string(title="Text Color", defval="blue", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
-user_label_size = input.string(title="Text Size", defval="normal", options=["tiny", "small", "normal", "large"])
+user_text_color = input.string(defval="blue", title="Text Color", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
+user_label_size = input.string(defval="normal", title="Text Size", options=["tiny", "small", "normal", "large"])
 
 
 // London Session Inputs
-show_london_session = input.bool(title="Show London Session Box", defval=true)
-show_london_session_rng = input.bool(title="Show London Session Range Pips", defval=true)
+show_london_session = input.bool(defval=true, title="Show London Session Box")
+show_london_session_rng = input.bool(defval=true, title="Show London Session Range Pips")
 
 
-london_ssth = input.string(title="London Start Hour (EST)", defval="03", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
-london_sstm = input.string(title="London Start Minute (EST)", defval="00", options=["00", "15", "30", "45"])
+london_ssth = input.string(defval="03", title="London Start Hour (EST)", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
+london_sstm = input.string(defval="00", title="London Start Minute (EST)", options=["00", "15", "30", "45"])
 
-london_esth = input.string(title="London End Hour (EST)", defval="07", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
-london_estm = input.string(title="London End Minute (EST)", defval="00", options=["00", "15", "30", "45"])
+london_esth = input.string(defval="07", title="London End Hour (EST)", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
+london_estm = input.string(defval="00", title="London End Minute (EST)", options=["00", "15", "30", "45"])
 
 
-luser_box_line_color = input.string(title="London Range Border Color", defval="teal", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
-lboxLineWidth = input.int(title="London Box Line Width", defval=1, minval=0, maxval=10)
-luser_box_line_style = input.string(title="London Box Line Style", defval="solid", options=["solid", "dashed", "dotted"])
+luser_box_line_color = input.string(defval="teal", title="London Range Border Color", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
+lboxLineWidth = input.int(defval=1, title="London Box Line Width", minval=0, maxval=10)
+luser_box_line_style = input.string(defval="solid", title="London Box Line Style", options=["solid", "dashed", "dotted"])
 
-lsessionLineWidth = input.int(title="Session High / Low / Mid Line Width", defval=2, minval=0, maxval=20)
-luser_upperlower_line_style = input.string(title="Session High / Low Line Style", defval="dotted", options=["solid", "dashed", "dotted"])
+lsessionLineWidth = input.int(defval=2, title="Session High / Low / Mid Line Width", minval=0, maxval=20)
+luser_upperlower_line_style = input.string(defval="dotted", title="Session High / Low Line Style", options=["solid", "dashed", "dotted"])
 
-luser_midline_color = input.string(title="Middle Range Line Color", defval="teal", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
-luser_middle_line_style = input.string(title="Middle Range Line Style", defval="dotted", options=["solid", "dashed", "dotted"])
+luser_midline_color = input.string(defval="teal", title="Middle Range Line Color", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
+luser_middle_line_style = input.string(defval="dotted", title="Middle Range Line Style", options=["solid", "dashed", "dotted"])
 
-luser_text_color = input.string(title="Text Color", defval="teal", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
-luser_label_size = input.string(title="Text Size", defval="normal", options=["tiny", "small", "normal", "large"])
+luser_text_color = input.string(defval="teal", title="Text Color", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
+luser_label_size = input.string(defval="normal", title="Text Size", options=["tiny", "small", "normal", "large"])
 
 // End London
 
 
 // New York Session Inputs
-show_ny_session = input.bool(title="Show New York Session Box", defval=true)
-show_ny_session_rng = input.bool(title="Show New York Session Range Pips", defval=true)
+show_ny_session = input.bool(defval=true, title="Show New York Session Box")
+show_ny_session_rng = input.bool(defval=true, title="Show New York Session Range Pips")
 
-ny_ssth = input.string(title="New York Start Hour (EST)", defval="08", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
-ny_sstm = input.string(title="New York Start Minute (EST)", defval="00", options=["00", "15", "30", "45"])
+ny_ssth = input.string(defval="08", title="New York Start Hour (EST)", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
+ny_sstm = input.string(defval="00", title="New York Start Minute (EST)", options=["00", "15", "30", "45"])
 
-ny_esth = input.string(title="New York End Hour (EST)", defval="12", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
-ny_estm = input.string(title="New York End Minute (EST)", defval="00", options=["00", "15", "30", "45"])
-
-
-nuser_box_line_color = input.string(title="New York Range Border Color", defval="silver", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
-nboxLineWidth = input.int(title="New York Box Line Width", defval=1, minval=0, maxval=10)
-nuser_box_line_style = input.string(title="New York Box Line Style", defval="solid", options=["solid", "dashed", "dotted"])
-
-nsessionLineWidth = input.int(title="Session High / Low / Mid Line Width", defval=2, minval=0, maxval=20)
-nuser_upperlower_line_style = input.string(title="Session High / Low Line Style", defval="dotted", options=["solid", "dashed", "dotted"])
-
-nuser_midline_color = input.string(title="Middle Range Line Color", defval="silver", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
-nuser_middle_line_style = input.string(title="Middle Range Line Style", defval="dotted", options=["solid", "dashed", "dotted"])
-
-nuser_text_color = input.string(title="Text Color", defval="silver", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
-nuser_label_size = input.string(title="Text Size", defval="normal", options=["tiny", "small", "normal", "large"])
-
-showADR = input.bool(title="Show Average Daily Range", defval=true)
-is_forex_pips = input.bool(title="Display average range as forex pips?", defval=true)
-daily_adr_user = input.int(title="Show ADR for x days", defval=1, minval=0)
-daily_adr_length = input.int(title="ADR Length parameter (Days - default 3 weeks, 21 days)", defval=21, minval=0)
-
-showPreviousDayHiLo = input.bool(title="Show Previous Days High / Low", defval=true)
-previousDayHiLoColor = input.string(title="Previous Days Line Color", defval="yellow", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
-supportLineWidth = input.int(title="Previous Days Line Width", defval=1, minval=0, maxval=10)
-previousDayHiLoLineStyle = input.string(title="Previous Days Line Style", defval="dashed", options=["solid", "dashed", "dotted"])
-showHiLoPriceRange = input.bool(title="Show Previous Days Range", defval=false)
-showHiLoPriceLabel = input.bool(title="Show Line Label (YH / YL)", defval=false)
+ny_esth = input.string(defval="12", title="New York End Hour (EST)", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
+ny_estm = input.string(defval="00", title="New York End Minute (EST)", options=["00", "15", "30", "45"])
 
 
-showLastWeeklyHiLo = input.bool(title="Show Last Weeks High / Low", defval=true)
-lastWeeklyHiLoColor = input.string(title="Last Week Line Color", defval="orange", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
-supportLastWeekLineWidth = input.int(title="Last Week Line Width", defval=1, minval=0, maxval=10)
-lastWeeklyHiLoStyle = input.string(title="Last Week Line Style", defval="dashed", options=["solid", "dashed", "dotted"])
-lastWeeklyHiLoShowLabel = input.bool(title="Show Line Label (PWH / PWL)", defval=true)
+nuser_box_line_color = input.string(defval="silver", title="New York Range Border Color", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
+nboxLineWidth = input.int(defval=1, title="New York Box Line Width", minval=0, maxval=10)
+nuser_box_line_style = input.string(defval="solid", title="New York Box Line Style", options=["solid", "dashed", "dotted"])
+
+nsessionLineWidth = input.int(defval=2, title="Session High / Low / Mid Line Width", minval=0, maxval=20)
+nuser_upperlower_line_style = input.string(defval="dotted", title="Session High / Low Line Style", options=["solid", "dashed", "dotted"])
+
+nuser_midline_color = input.string(defval="silver", title="Middle Range Line Color", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
+nuser_middle_line_style = input.string(defval="dotted", title="Middle Range Line Style", options=["solid", "dashed", "dotted"])
+
+nuser_text_color = input.string(defval="silver", title="Text Color", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
+nuser_label_size = input.string(defval="normal", title="Text Size", options=["tiny", "small", "normal", "large"])
+
+showADR = input.bool(defval=true, title="Show Average Daily Range")
+is_forex_pips = input.bool(defval=true, title="Display average range as forex pips?")
+daily_adr_user = input.int(defval=1, title="Show ADR for x days", minval=0)
+daily_adr_length = input.int(defval=21, title="ADR Length parameter (Days - default 3 weeks, 21 days)", minval=0)
+
+showPreviousDayHiLo = input.bool(defval=true, title="Show Previous Days High / Low")
+previousDayHiLoColor = input.string(defval="yellow", title="Previous Days Line Color", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
+supportLineWidth = input.int(defval=1, title="Previous Days Line Width", minval=0, maxval=10)
+previousDayHiLoLineStyle = input.string(defval="dashed", title="Previous Days Line Style", options=["solid", "dashed", "dotted"])
+showHiLoPriceRange = input.bool(defval=false, title="Show Previous Days Range")
+showHiLoPriceLabel = input.bool(defval=false, title="Show Line Label (YH / YL)")
 
 
-showWeeklyHiLo = input.bool(title="Show This Weeks High / Low", defval=false)
-weeklyHiLoColor = input.string(title="This Weeks Line Color", defval="olive", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
-supportWeekLineWidth = input.int(title="This Weeks Line Width", defval=1, minval=0, maxval=10)
-weeklyHiLoStyle = input.string(title="This Weeks Line Style", defval="dashed", options=["solid", "dashed", "dotted"])
-weeklyHiLoShowLabel = input.bool(title="Show Line Label (WH / WL)", defval=false)
+showLastWeeklyHiLo = input.bool(defval=true, title="Show Last Weeks High / Low")
+lastWeeklyHiLoColor = input.string(defval="orange", title="Last Week Line Color", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
+supportLastWeekLineWidth = input.int(defval=1, title="Last Week Line Width", minval=0, maxval=10)
+lastWeeklyHiLoStyle = input.string(defval="dashed", title="Last Week Line Style", options=["solid", "dashed", "dotted"])
+lastWeeklyHiLoShowLabel = input.bool(defval=true, title="Show Line Label (PWH / PWL)")
 
-showHiLoTime = input.bool(title="Show Hi / Low Time of Day (Always Displays Eastern Standard Time)", defval=false)
+
+showWeeklyHiLo = input.bool(defval=false, title="Show This Weeks High / Low")
+weeklyHiLoColor = input.string(defval="olive", title="This Weeks Line Color", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
+supportWeekLineWidth = input.int(defval=1, title="This Weeks Line Width", minval=0, maxval=10)
+weeklyHiLoStyle = input.string(defval="dashed", title="This Weeks Line Style", options=["solid", "dashed", "dotted"])
+weeklyHiLoShowLabel = input.bool(defval=false, title="Show Line Label (WH / WL)")
+
+showHiLoTime = input.bool(defval=false, title="Show Hi / Low Time of Day (Always Displays Eastern Standard Time)")
 
 
 // End User Inputs
