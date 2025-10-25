@@ -31,8 +31,8 @@ user_label_size = input(title="Text Size", defval="normal", options=["tiny", "sm
 
 
 // London Session Inputs
-show_london_session = input(defval=true, type=input.bool, title="Show London Session Box")
-show_london_session_rng = input(defval=true, type=input.bool, title="Show London Session Range Pips")
+show_london_session = input.bool(defval=true, title="Show London Session Box")
+show_london_session_rng = input.bool(defval=true, title="Show London Session Range Pips")
 
 
 london_ssth = input(title="London Start Hour (EST)", defval="03", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
@@ -59,8 +59,8 @@ luser_label_size = input(title="Text Size", defval="normal", options=["tiny", "s
 
 
 // New York Session Inputs
-show_ny_session = input(defval=true, type=input.bool, title="Show New York Session Box")
-show_ny_session_rng = input(defval=true, type=input.bool, title="Show New York Session Range Pips")
+show_ny_session = input.bool(defval=true, title="Show New York Session Box")
+show_ny_session_rng = input.bool(defval=true, title="Show New York Session Range Pips")
 
 ny_ssth = input(title="New York Start Hour (EST)", defval="08", options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
 ny_sstm = input(title="New York Start Minute (EST)", defval="00", options=["00", "15", "30", "45"])
@@ -82,33 +82,33 @@ nuser_middle_line_style = input(title="Middle Range Line Style", defval="dotted"
 nuser_text_color = input(title="Text Color", defval="silver", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
 nuser_label_size = input(title="Text Size", defval="normal", options=["tiny", "small", "normal", "large"])
 
-showADR = input(defval=true, type=input.bool, title="Show Average Daily Range")
-is_forex_pips = input(title="Display average range as forex pips?", type=input.bool, defval=true)
-daily_adr_user = input(title="Show ADR for x days", type=input.integer, defval=1, minval=0)
-daily_adr_length = input(title="ADR Length parameter (Days - default 3 weeks, 21 days)", type=input.integer, defval=21, minval=0)
+showADR = input.bool(defval=true, title="Show Average Daily Range")
+is_forex_pips = input.bool(defval=true, title="Display average range as forex pips?")
+daily_adr_user = input.int(defval=1, title="Show ADR for x days", minval=0)
+daily_adr_length = input.int(defval=21, title="ADR Length parameter (Days - default 3 weeks, 21 days)", minval=0)
 
-showPreviousDayHiLo = input(defval=true, type=input.bool, title="Show Previous Days High / Low")
+showPreviousDayHiLo = input.bool(defval=true, title="Show Previous Days High / Low")
 previousDayHiLoColor = input(title="Previous Days Line Color", defval="yellow", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
 supportLineWidth = input(title="Previous Days Line Width", defval=1, minval=0, maxval=10)
 previousDayHiLoLineStyle = input(title="Previous Days Line Style", defval="dashed", options=["solid", "dashed", "dotted"])
-showHiLoPriceRange = input(defval=false, type=input.bool, title="Show Previous Days Range")
-showHiLoPriceLabel = input(defval=false, type=input.bool, title="Show Line Label (YH / YL)")
+showHiLoPriceRange = input.bool(defval=false, title="Show Previous Days Range")
+showHiLoPriceLabel = input.bool(defval=false, title="Show Line Label (YH / YL)")
 
 
-showLastWeeklyHiLo = input(defval=true, type=input.bool, title="Show Last Weeks High / Low")
+showLastWeeklyHiLo = input.bool(defval=true, title="Show Last Weeks High / Low")
 lastWeeklyHiLoColor = input(title="Last Week Line Color", defval="orange", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
 supportLastWeekLineWidth = input(title="Last Week Line Width", defval=1, minval=0, maxval=10)
 lastWeeklyHiLoStyle = input(title="Last Week Line Style", defval="dashed", options=["solid", "dashed", "dotted"])
-lastWeeklyHiLoShowLabel = input(defval=true, type=input.bool, title="Show Line Label (PWH / PWL)")
+lastWeeklyHiLoShowLabel = input.bool(defval=true, title="Show Line Label (PWH / PWL)")
 
 
-showWeeklyHiLo = input(defval=false, type=input.bool, title="Show This Weeks High / Low")
+showWeeklyHiLo = input.bool(defval=false, title="Show This Weeks High / Low")
 weeklyHiLoColor = input(title="This Weeks Line Color", defval="olive", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
 supportWeekLineWidth = input(title="This Weeks Line Width", defval=1, minval=0, maxval=10)
 weeklyHiLoStyle = input(title="This Weeks Line Style", defval="dashed", options=["solid", "dashed", "dotted"])
-weeklyHiLoShowLabel = input(defval=false, type=input.bool, title="Show Line Label (WH / WL)")
+weeklyHiLoShowLabel = input.bool(defval=false, title="Show Line Label (WH / WL)")
 
-showHiLoTime = input(defval=false, type=input.bool, title="Show Hi / Low Time of Day (Always Displays Eastern Standard Time)")
+showHiLoTime = input.bool(defval=false, title="Show Hi / Low Time of Day (Always Displays Eastern Standard Time)")
 
 
 // End User Inputs
