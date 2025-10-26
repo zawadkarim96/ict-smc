@@ -744,7 +744,8 @@ CandleSet htf4Monitor = htf4.Monitor()
 CandleSet htf5Monitor = htf5.Monitor()
 CandleSet htf6Monitor = htf6.Monitor()
 
-int offset = settings.offset
+int baseOffset = math.max(settings.offset, settings.width + settings.buffer)
+int offset = baseOffset
 if htf1.settings.show and helper.ValidTimeframe(htf1.settings.htf)
     bool showTrace = false
     if settings.trace_anchor == 'First Timeframe'
@@ -854,6 +855,7 @@ user_middle_line_style = input.string(title="Middle Range Line Style", defval="d
 
 user_text_color = input.string(title="Text Color", defval="blue", options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
 user_label_size = input.string(title="Text Size", defval="normal", options=["tiny", "small", "normal", "large"])
+show_asian_session = input.bool(defval=true, title="Show Asian Session Box")
 
 
 // London Session Inputs
@@ -953,6 +955,8 @@ showHiLoTime = input.bool(defval=false, title="Show Hi / Low Time of Day (Always
 // Asian Input Convertions
 line_color = user_box_line_color == "aqua" ? color.aqua : user_box_line_color == "black" ? color.black : user_box_line_color == "blue" ? color.blue : user_box_line_color == "fuchsia" ? color.fuchsia : user_box_line_color == "gray" ? color.gray : user_box_line_color == "green" ? color.green : user_box_line_color == "lime" ? color.lime : user_box_line_color == "maroon" ? color.maroon : user_box_line_color == "navy" ? color.navy : user_box_line_color == "olive" ? color.olive : user_box_line_color == "orange" ? color.orange : user_box_line_color == "purple" ? color.purple : user_box_line_color == "red" ? color.red : user_box_line_color == "silver" ? color.silver : user_box_line_color == "teal" ? color.teal : user_box_line_color == "white" ? color.white : user_box_line_color == "yellow" ? color.yellow : color.black
 midline_color = user_midline_color == "aqua" ? color.aqua : user_midline_color == "black" ? color.black : user_midline_color == "blue" ? color.blue : user_midline_color == "fuchsia" ? color.fuchsia : user_midline_color == "gray" ? color.gray : user_midline_color == "green" ? color.green : user_midline_color == "lime" ? color.lime : user_midline_color == "maroon" ? color.maroon : user_midline_color == "navy" ? color.navy : user_midline_color == "olive" ? color.olive : user_midline_color == "orange" ? color.orange : user_midline_color == "purple" ? color.purple : user_midline_color == "red" ? color.red : user_midline_color == "silver" ? color.silver : user_midline_color == "teal" ? color.teal : user_midline_color == "white" ? color.white : user_midline_color == "yellow" ? color.yellow : color.black
+line_color := show_asian_session ? line_color : na
+midline_color := show_asian_session ? midline_color : na
 text_color = user_text_color == "aqua" ? color.aqua : user_text_color == "black" ? color.black : user_text_color == "blue" ? color.blue : user_text_color == "fuchsia" ? color.fuchsia : user_text_color == "gray" ? color.gray : user_text_color == "green" ? color.green : user_text_color == "lime" ? color.lime : user_text_color == "maroon" ? color.maroon : user_text_color == "navy" ? color.navy : user_text_color == "olive" ? color.olive : user_text_color == "orange" ? color.orange : user_text_color == "purple" ? color.purple : user_text_color == "red" ? color.red : user_text_color == "silver" ? color.silver : user_text_color == "teal" ? color.teal : user_text_color == "white" ? color.white : user_text_color == "yellow" ? color.yellow : color.black
 
 box_line_style = user_box_line_style == "solid" ? line.style_solid : user_box_line_style == "dashed" ? line.style_dashed : user_box_line_style == "dotted" ? line.style_dotted : line.style_solid
@@ -1312,8 +1316,9 @@ rth_mid = (rth_low + rth_high) / 2
 
 float sessionRange = na
 var label sessionRangeLabel = na
+bool showAsianRange = show_asian_session and isBelowHourValidResolution()
 
-if isBelowHourValidResolution()
+if showAsianRange
     // Build the Asian Box
     trl = line.new(FromDate, rth_low, ToDate, rth_low, xloc=xloc.bar_time, color=line_color, style=box_line_style, width = boxLineWidth)
     line.delete(trl[1])
@@ -1353,14 +1358,14 @@ lineColor = color.new(color.white,100)
 //timerange(res, sess) => not na(time(res, sess)) ? 1 : 0
 
 //Plot Statements For Opening Range Lines
-openRangeHigh = plot(timerange(timeframe.period, rth_fill_ses) and isBelowHourValidResolution() ? highRes : na, color=lineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
-openRangeLow = plot(timerange(timeframe.period, rth_fill_ses) and isBelowHourValidResolution() ? lowRes : na, color=lineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
-bgcolor(timerange(timeframe.period, rth_ses) and isBelowHourValidResolution() ? color.new(color.silver, 100) : na, title="Asian Session Background Color")
+openRangeHigh = plot(timerange(timeframe.period, rth_fill_ses) and showAsianRange ? highRes : na, color=lineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
+openRangeLow = plot(timerange(timeframe.period, rth_fill_ses) and showAsianRange ? lowRes : na, color=lineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
+bgcolor(timerange(timeframe.period, rth_ses) and showAsianRange ? color.new(color.silver, 100) : na, title="Asian Session Background Color")
 
 
-fill(openRangeHigh, openRangeLow, color=isBelowHourValidResolution() ? color.new(color.blue, 90) : na, title="Fill Asian Range Color")
+fill(openRangeHigh, openRangeLow, color=showAsianRange ? color.new(color.blue, 90) : na, title="Fill Asian Range Color")
 
-if (not inSession and inSession[1] and isBelowHourValidResolution())
+if (not inSession and inSession[1] and showAsianRange)
     sessionRange := ((rth_high[1]-rth_low[1])/(syminfo.mintick))/10
     labelTime = get_label_offset(inSession)
 
@@ -1369,6 +1374,10 @@ if (not inSession and inSession[1] and isBelowHourValidResolution())
         sessionRangeLabel := label.new(labelTime, rth_low[1], "A = " + str.tostring(sessionRange) + "\nADR = " + str.tostring(to_pips(day_adr)), xloc.bar_time, yloc.price, color.new(color.black,100), label.style_label_up, text_color, labelsize)
     else
         sessionRangeLabel := label.new(labelTime, rth_low[1], "A = " + str.tostring(sessionRange), xloc.bar_time, yloc.price, color.new(color.black,100), label.style_label_up, text_color, labelsize)
+
+if not showAsianRange and not na(sessionRangeLabel)
+    label.delete(sessionRangeLabel)
+    sessionRangeLabel := na
 
 // End Sesction
 
