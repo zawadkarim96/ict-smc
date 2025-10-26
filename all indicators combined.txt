@@ -73,13 +73,14 @@ type Settings
 	color trace_h_color
 	string trace_h_style
 	int trace_h_size
-	color trace_l_color
-	string trace_l_style
-	int trace_l_size
-	string trace_anchor
-	bool label_show
-	color label_color
-	string label_size
+        color trace_l_color
+        string trace_l_style
+        int trace_l_size
+        string trace_anchor
+        bool trace_extend
+        bool label_show
+        color label_color
+        string label_size
     string label_position
     string label_alignment
 	bool fvg_show
@@ -254,6 +255,7 @@ settings.trace_l_color          := input.color(color.new(color.gray, 50), 'Low�
 settings.trace_l_style          := input.string('····', '', options = ['⎯⎯⎯', '----', '····'], inline = '4', group = group_trace)
 settings.trace_l_size           := input.int(1, '', options = [1, 2, 3, 4], inline = '4', group = group_trace)
 settings.trace_anchor           := input.string('First Timeframe', 'Anchor to', options = ['First Timeframe', 'Last Timeframe'], group = group_trace)
+settings.trace_extend           := input.bool(false, 'Extend trace to price candles', group = group_trace)
 
 settings.label_show             := input.bool(false, 'Price Label           ', inline = 'label')
 settings.label_color            := input.color(color.new(color.black, 10), '', inline = 'label')
@@ -669,13 +671,20 @@ method Update(CandleSet candleSet, int offset, bool showTrace) =>
         candleSet.HideActive()
 
         if (barstate.isrealtime or barstate.islast) and settings.trace_show and showTrace
+            float boxLeft = box.get_left(candle.body)
+            float boxRight = box.get_right(candle.body)
+            float wickUpAnchor = nz(line.get_x1(candle.wick_up), boxRight)
+            float wickDownAnchor = nz(line.get_x1(candle.wick_down), boxRight)
+
             if bar_index - candle.o_idx < 5000
+                float openStart = settings.trace_extend ? candle.o_idx : boxLeft
+                float openEnd = settings.trace_extend ? boxLeft : boxRight
                 if na(trace.o)
-                    trace.o := line.new(candle.o_idx, candle.o, box.get_left(candle.body), candle.o, xloc = xloc.bar_index, color = settings.trace_o_color, style = helper.LineStyle(settings.trace_o_style), width = settings.trace_o_size)
+                    trace.o := line.new(openStart, candle.o, openEnd, candle.o, xloc = xloc.bar_index, color = settings.trace_o_color, style = helper.LineStyle(settings.trace_o_style), width = settings.trace_o_size)
                     trace.o
                 else
-                    line.set_xy1(trace.o, candle.o_idx, candle.o)
-                    line.set_xy2(trace.o, box.get_left(candle.body), candle.o)
+                    line.set_xy1(trace.o, openStart, candle.o)
+                    line.set_xy2(trace.o, openEnd, candle.o)
 
                 if settings.label_show
                     if na(trace.o_l)
@@ -686,12 +695,14 @@ method Update(CandleSet candleSet, int offset, bool showTrace) =>
                         label.set_text(trace.o_l, str.tostring(candle.o))
 
             if bar_index - candle.c_idx < 5000
+                float closeStart = settings.trace_extend ? candle.c_idx : boxLeft
+                float closeEnd = settings.trace_extend ? boxLeft : boxRight
                 if na(trace.c)
-                    trace.c := line.new(candle.c_idx, candle.c, box.get_left(candle.body), candle.c, xloc = xloc.bar_index, color = settings.trace_c_color, style = helper.LineStyle(settings.trace_c_style), width = settings.trace_c_size)
+                    trace.c := line.new(closeStart, candle.c, closeEnd, candle.c, xloc = xloc.bar_index, color = settings.trace_c_color, style = helper.LineStyle(settings.trace_c_style), width = settings.trace_c_size)
                     trace.c
                 else
-                    line.set_xy1(trace.c, candle.c_idx, candle.c)
-                    line.set_xy2(trace.c, box.get_left(candle.body), candle.c)
+                    line.set_xy1(trace.c, closeStart, candle.c)
+                    line.set_xy2(trace.c, closeEnd, candle.c)
 
                 if settings.label_show
                     if na(trace.c_l)
@@ -702,12 +713,14 @@ method Update(CandleSet candleSet, int offset, bool showTrace) =>
                         label.set_text(trace.c_l, str.tostring(candle.c))
 
             if bar_index - candle.h_idx < 5000
+                float highStart = settings.trace_extend ? candle.h_idx : boxLeft
+                float highEnd = settings.trace_extend ? wickUpAnchor : boxRight
                 if na(trace.h)
-                    trace.h := line.new(candle.h_idx, candle.h, line.get_x1(candle.wick_up), candle.h, xloc = xloc.bar_index, color = settings.trace_h_color, style = helper.LineStyle(settings.trace_h_style), width = settings.trace_h_size)
+                    trace.h := line.new(highStart, candle.h, highEnd, candle.h, xloc = xloc.bar_index, color = settings.trace_h_color, style = helper.LineStyle(settings.trace_h_style), width = settings.trace_h_size)
                     trace.h
                 else
-                    line.set_xy1(trace.h, candle.h_idx, candle.h)
-                    line.set_xy2(trace.h, line.get_x1(candle.wick_up), candle.h)
+                    line.set_xy1(trace.h, highStart, candle.h)
+                    line.set_xy2(trace.h, highEnd, candle.h)
 
                 if settings.label_show
                     if na(trace.h_l)
@@ -718,12 +731,14 @@ method Update(CandleSet candleSet, int offset, bool showTrace) =>
                         label.set_text(trace.h_l, str.tostring(candle.h))
 
             if bar_index - candle.l_idx < 5000
+                float lowStart = settings.trace_extend ? candle.l_idx : boxLeft
+                float lowEnd = settings.trace_extend ? wickDownAnchor : boxRight
                 if na(trace.l)
-                    trace.l := line.new(candle.l_idx, candle.l, line.get_x1(candle.wick_down), candle.l, xloc = xloc.bar_index, color = settings.trace_l_color, style = helper.LineStyle(settings.trace_l_style), width = settings.trace_l_size)
+                    trace.l := line.new(lowStart, candle.l, lowEnd, candle.l, xloc = xloc.bar_index, color = settings.trace_l_color, style = helper.LineStyle(settings.trace_l_style), width = settings.trace_l_size)
                     trace.l
                 else
-                    line.set_xy1(trace.l, candle.l_idx, candle.l)
-                    line.set_xy2(trace.l, line.get_x1(candle.wick_down), candle.l)
+                    line.set_xy1(trace.l, lowStart, candle.l)
+                    line.set_xy2(trace.l, lowEnd, candle.l)
 
                 if settings.label_show
                     if na(trace.l_l)
@@ -1354,16 +1369,18 @@ if showAsianRange
 highRes = rth_high
 lowRes = rth_low
 
-lineColor = color.new(color.white,100)
+lineColor = color.new(line_color, 100)
+asianFillColor = color.new(line_color, 90)
+asianBackgroundColor = color.new(line_color, 92)
 //timerange(res, sess) => not na(time(res, sess)) ? 1 : 0
 
 //Plot Statements For Opening Range Lines
 openRangeHigh = plot(timerange(timeframe.period, rth_fill_ses) and showAsianRange ? highRes : na, color=lineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
 openRangeLow = plot(timerange(timeframe.period, rth_fill_ses) and showAsianRange ? lowRes : na, color=lineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
-bgcolor(timerange(timeframe.period, rth_ses) and showAsianRange ? color.new(color.silver, 100) : na, title="Asian Session Background Color")
+bgcolor(timerange(timeframe.period, rth_ses) and showAsianRange ? asianBackgroundColor : na, title="Asian Session Background Color")
 
 
-fill(openRangeHigh, openRangeLow, color=showAsianRange ? color.new(color.blue, 90) : na, title="Fill Asian Range Color")
+fill(openRangeHigh, openRangeLow, color=showAsianRange ? asianFillColor : na, title="Fill Asian Range Color")
 
 if (not inSession and inSession[1] and showAsianRange)
     sessionRange := ((rth_high[1]-rth_low[1])/(syminfo.mintick))/10
@@ -3788,7 +3805,14 @@ alertcondition(currentAlerts.bearishFairValueGap,       'Bearish FVG',          
 // VWAP MTF
 // =================================================================================================
 
-TimeFrame = input('W')
+string group_vwap = "VWAP Settings  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+TimeFrame = input.string('W', 'VWAP Timeframe', group = group_vwap)
+showBcol = input.bool(false, title="Show barcolors", group = group_vwap)
+showPrevVWAP = input.bool(false, title="Show previous VWAP close", group = group_vwap)
+vwapBullColorInput = input.color(color.green, 'Bullish VWAP color', group = group_vwap)
+vwapBearColorInput = input.color(color.red, 'Bearish VWAP color', group = group_vwap)
+vwapTransparencyInput = input.int(0, 'VWAP Transparency', minval = 0, maxval = 100, group = group_vwap)
+
 start = request.security(syminfo.tickerid, TimeFrame, time)
 //------------------------------------------------
 newSession = ta.change(start) != 0
@@ -3802,12 +3826,13 @@ volumesum := newSession ? volume : nz(volumesum[1]) + volume
 v2sum := newSession ? volume * hl2 * hl2 : nz(v2sum[1]) + volume * hl2 * hl2
 myvwap = volumesum != 0 ? vwapsum / volumesum : na
 dev = volumesum != 0 ? math.sqrt(math.max(v2sum / volumesum - nz(myvwap) * nz(myvwap), 0)) : na
-Coloring = close > myvwap ? color.green : color.red
+color bullVWAPColor = color.new(vwapBullColorInput, vwapTransparencyInput)
+color bearVWAPColor = color.new(vwapBearColorInput, vwapTransparencyInput)
+Coloring = close > myvwap ? bullVWAPColor : bearVWAPColor
 av = myvwap
-showBcol = input.bool(false, title="Show barcolors")
-showPrevVWAP = input.bool(false, title="Show previous VWAP close")
 prevwap := newSession ? myvwap[1] : prevwap[1]
-plot(showPrevVWAP ? prevwap : na, style=plot.style_circles, color=close > prevwap ? color.green : color.red)
-A = plot(av, style=plot.style_circles, color=Coloring)
+prevColor = close > prevwap ? bullVWAPColor : bearVWAPColor
+plot(showPrevVWAP ? prevwap : na, style = plot.style_circles, color = prevColor)
+A = plot(av, style = plot.style_circles, color = Coloring)
 barcolor(showBcol ? Coloring : na)
 
