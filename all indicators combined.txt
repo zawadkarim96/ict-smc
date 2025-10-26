@@ -629,15 +629,18 @@ method Monitor(CandleSet candleSet) =>
 
         bool draw = bar_index < last_bar_index - 2
 
-        candle.body := box.new(
-            bar_index, math.max(candle.o, candle.c),
-            bar_index + 2, math.min(candle.o, candle.c),
-            border_color = draw ? (bull ? settings.bull_border : settings.bear_border) : color_transparent,
+        float bodyTop = math.max(candle.o, candle.c)
+        float bodyBottom = math.min(candle.o, candle.c)
+        color borderColor = draw ? (bull ? settings.bull_border : settings.bear_border) : color_transparent
+        color bodyColor = draw ? (bull ? settings.bull_body : settings.bear_body) : color_transparent
+
+        candle.body := box.new(bar_index, bodyTop, bar_index + 2, bodyBottom,
+            border_color = borderColor,
             border_width = 1,
-            bgcolor = draw ? (bull ? settings.bull_body : settings.bear_body) : color_transparent)
-        candle.wick_up := line.new(bar_index + 1, candle.h, bar_index, math.max(candle.o, candle.c),
+            bgcolor = bodyColor)
+        candle.wick_up := line.new(bar_index + 1, candle.h, bar_index, bodyTop,
             color = draw ? (bull ? settings.bull_wick : settings.bear_wick) : color_transparent)
-        candle.wick_down := line.new(bar_index + 1, math.min(candle.o, candle.c), bar_index, candle.l,
+        candle.wick_down := line.new(bar_index + 1, bodyBottom, bar_index, candle.l,
             color = draw ? (bull ? settings.bull_wick : settings.bear_wick) : color_transparent)
 
         candleSet.candles.unshift(candle)
