@@ -1817,19 +1817,14 @@ visVim     = visVimInput < 2 ? 2 : visVimInput > 100 ? 100 : visVimInput
 cVimbl     = input.color (color.new(#06b2d0,  0), title = ''                       ,   group = 'Volume Imbalance' , inline = 'VI'                                    )
 
 //Order Blocks  
-showOB     = input.bool  (           true         , title = 'Show Order Blocks'      ,   group = 'Order Blocks'
-                                        )
-lengthInput= input.int   (            10          , title = 'Swing Lookback'         ,   group = 'Order Blocks'
-                                        )
+showOB     = input.bool  (           true         , title = 'Show Order Blocks'      ,   group = 'Order Blocks'      )
+lengthInput= input.int   (            10          , title = 'Swing Lookback'         ,   group = 'Order Blocks'      )
 length     = lengthInput < 3 ? 3 : lengthInput
-showBullInput= input.int   (             1          , title = 'Show Last Bullish OB'   ,   group = 'Order Blocks'
-                                        )
+showBullInput= input.int   (             1          , title = 'Show Last Bullish OB'   ,   group = 'Order Blocks'     )
 showBull   = showBullInput < 0 ? 0 : showBullInput
-showBearInput= input.int   (             1          , title = 'Show Last Bearish OB'   ,   group = 'Order Blocks'
-                                        )
+showBearInput= input.int   (             1          , title = 'Show Last Bearish OB'   ,   group = 'Order Blocks'     )
 showBear   = showBearInput < 0 ? 0 : showBearInput
-useBody    = input.bool  (           true         , title = 'Use Candle Body'
-                                        )
+useBody    = input.bool  (           true         , title = 'Use Candle Body'          )
 
 //OB Style
 bullCss    = input.color (color.new(#3e89fa,  0), title = 'Bullish OB  '           ,   group = 'Order Blocks'     , inline = 'bullcss'                               )
@@ -1844,9 +1839,7 @@ showLabels = input.bool  (          false, title = 'Show Historical Polarity Cha
 showLq     = input.bool  (           true         , title = 'Show Liquidity'         ,   group = 'Liquidity'                                                           )
 liquidityMarginInput = input.float (             4          , title = 'margin'                 ,   group = 'Liquidity'   , step = 0.1                               )
 a     = 10 / (liquidityMarginInput < 2 ? 2 : liquidityMarginInput > 7 ? 7 : liquidityMarginInput)
-visLiqInput = input.int   (             2          , title = '# Visible Liq. boxes'   ,   group = 'Liquidity'
-                                       , tooltip = 'In the same direction'
-                                       )
+visLiqInput = input.int   (             2          , title = '# Visible Liq. boxes'   ,   group = 'Liquidity'        , tooltip = 'In the same direction' )
 visLiq     = visLiqInput < 1 ? 1 : visLiqInput > 50 ? 50 : visLiqInput
 cLIQ_B     = input.color (color.new(#fa451c,  0), title = 'Buyside Liquidity  '    ,   group = 'Liquidity'                                                           )
 cLIQ_S     = input.color (color.new(#1ce4fa,  0), title = 'Sellside Liquidity'     ,   group = 'Liquidity'                                                           )
@@ -1854,11 +1847,8 @@ cLIQ_S     = input.color (color.new(#1ce4fa,  0), title = 'Sellside Liquidity'  
 //FVG      
 shwFVG     = input.bool  (           true         , title = 'Show FVGs'              ,   group = 'Fair Value Gaps'                                                     )
 i_BPR      = input.bool  (           false        , title = 'Balance Price Range'    ,   group = 'Fair Value Gaps'                                                     )
-i_FVG      = input.string(           'FVG'        , title = o                        ,   group = 'Fair Value Gaps'  , options=['FVG', 'IFVG']                           
-           ,                                                                           tooltip = 'Fair Value Gaps\nor\nImplied Fair Value Gaps'                        )
-visBxsInput = input.int   (             2          , title = '# Visible FVG\'s'       ,   group = 'Fair Value Gaps'
-                                       , tooltip = 'In the same direction'
-                                       )
+i_FVG      = input.string(           'FVG'        , title = o                        ,   group = 'Fair Value Gaps'  , options=['FVG', 'IFVG']                           , tooltip = 'Fair Value Gaps\nor\nImplied Fair Value Gaps'                        )
+visBxsInput = input.int   (             2          , title = '# Visible FVG\'s'       ,   group = 'Fair Value Gaps'  , tooltip = 'In the same direction' )
 visBxs     = visBxsInput < 1 ? 1 : visBxsInput > 20 ? 20 : visBxsInput
 
 //FVG Style
@@ -1871,15 +1861,13 @@ cFVGbrBR   = input.color (color.new(#FF0000,  0), title = 'Break'               
 iNWOG      = input.bool  (           true         , title = ''        , inline='NWOG',   group = 'NWOG/NDOG'                                                           )
 cNWOG1     = input.color (color.new(#ff5252, 28), title = 'NWOG    ', inline='NWOG',   group = 'NWOG/NDOG'                                                           )
 cNWOG2     = input.color (color.new(#b2b5be, 50), title = ''        , inline='NWOG',   group = 'NWOG/NDOG'                                                           )
-maxNWOGInput= input.int   (             3          , title = 'Show max', inline='NWOG',   group = 'NWOG/NDOG'
-                                        )
+maxNWOGInput= input.int   (             3          , title = 'Show max', inline='NWOG',   group = 'NWOG/NDOG'       )
 maxNWOG    = maxNWOGInput < 0 ? 0 : maxNWOGInput > 50 ? 50 : maxNWOGInput
 
 iNDOG      = input.bool  (           false        , title = ''        , inline='NDOG',   group = 'NWOG/NDOG'                                                           )
 cNDOG1     = input.color (color.new(#ff9800, 20), title = 'NDOG    ', inline='NDOG',   group = 'NWOG/NDOG'                                                           )
 cNDOG2     = input.color (color.new(#4dd0e1, 65), title =    ''     , inline='NDOG',   group = 'NWOG/NDOG'                                                           )
-maxNDOGInput= input.int   (             1          , title = 'Show max', inline='NDOG',   group = 'NWOG/NDOG'
-                                        )
+maxNDOGInput= input.int   (             1          , title = 'Show max', inline='NDOG',   group = 'NWOG/NDOG'       )
 maxNDOG    = maxNDOGInput < 0 ? 0 : maxNDOGInput > 50 ? 50 : maxNDOGInput
 
 //Fibonacci 
@@ -2460,8 +2448,7 @@ if i_BPR and bFVG_UP.size() > 0 and bFVG_DN.size() > 0
              , border_color= i_BPR ? color.new(cFVGbl, 65) : na
              , text_color  = i_BPR ? color.new(cFVGbl, 65) : na
               , text_size=size.small
-              , text= 'BPR'
-              ) 
+              , text= 'BPR'                 )
               , true
               , close > bxUPbtm ? 1 : close < bxDNtop ? -1 : 0
               )
@@ -2481,8 +2468,7 @@ if i_BPR and bFVG_UP.size() > 0 and bFVG_DN.size() > 0
              , border_color= i_BPR ? color.new(cFVGbr, 65) : na
              , text_color  = i_BPR ? color.new(cFVGbr, 65) : na
               , text_size=size.small
-              , text= 'BPR'
-              ) 
+              , text= 'BPR'                 )
               , true
               , close > bxDNbtm ? 1 : close < bxUPtop ? -1 : 0
               )
