@@ -634,14 +634,16 @@ method Monitor(CandleSet candleSet) =>
         color borderColor = draw ? (bull ? settings.bull_border : settings.bear_border) : color_transparent
         color bodyColor = draw ? (bull ? settings.bull_body : settings.bear_body) : color_transparent
 
-        candle.body := box.new(bar_index, bodyTop, bar_index + 2, bodyBottom,
-            border_color = borderColor,
-            border_width = 1,
-            bgcolor = bodyColor)
-        candle.wick_up := line.new(bar_index + 1, candle.h, bar_index, bodyTop,
-            color = draw ? (bull ? settings.bull_wick : settings.bear_wick) : color_transparent)
-        candle.wick_down := line.new(bar_index + 1, bodyBottom, bar_index, candle.l,
-            color = draw ? (bull ? settings.bull_wick : settings.bear_wick) : color_transparent)
+        candle.body := box.new(bar_index, bodyTop, bar_index + 2, bodyBottom)
+        box.set_border_color(candle.body, borderColor)
+        box.set_border_width(candle.body, 1)
+        box.set_bgcolor(candle.body, bodyColor)
+
+        candle.wick_up := line.new(bar_index + 1, candle.h, bar_index, bodyTop)
+        line.set_color(candle.wick_up, draw ? (bull ? settings.bull_wick : settings.bear_wick) : color_transparent)
+
+        candle.wick_down := line.new(bar_index + 1, bodyBottom, bar_index, candle.l)
+        line.set_color(candle.wick_down, draw ? (bull ? settings.bull_wick : settings.bear_wick) : color_transparent)
 
         candleSet.candles.unshift(candle)
 
