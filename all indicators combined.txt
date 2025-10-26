@@ -49,60 +49,60 @@ type CandleSettings
 	int max_display
 
 type Settings
-	int max_sets
-	color bull_body
-	color bull_border
-	color bull_wick
-	color bear_body
-	color bear_border
-	color bear_wick
-	int offset
-	int buffer
-	int htf_buffer
-	int width
-	bool use_custom_daily
+    int max_sets
+    color bull_body
+    color bull_border
+    color bull_wick
+    color bear_body
+    color bear_border
+    color bear_wick
+    int offset
+    int buffer
+    int htf_buffer
+    int width
+    bool use_custom_daily
     string custom_daily
     bool daily_name
-	bool trace_show
-	color trace_o_color
-	string trace_o_style
-	int trace_o_size
-	color trace_c_color
-	string trace_c_style
-	int trace_c_size
-	color trace_h_color
-	string trace_h_style
-	int trace_h_size
-        color trace_l_color
-        string trace_l_style
-        int trace_l_size
-        string trace_anchor
-        bool trace_extend
-        bool label_show
-        color label_color
-        string label_size
+    bool trace_show
+    color trace_o_color
+    string trace_o_style
+    int trace_o_size
+    color trace_c_color
+    string trace_c_style
+    int trace_c_size
+    color trace_h_color
+    string trace_h_style
+    int trace_h_size
+    color trace_l_color
+    string trace_l_style
+    int trace_l_size
+    string trace_anchor
+    bool trace_extend
+    bool label_show
+    color label_color
+    string label_size
     string label_position
     string label_alignment
-	bool fvg_show
-	color fvg_color
-	bool vi_show
-	color vi_color
-	bool htf_label_show
-	color htf_label_color
-	string htf_label_size
-	bool htf_timer_show
-	color htf_timer_color
-	string htf_timer_size
+    bool fvg_show
+    color fvg_color
+    bool vi_show
+    color vi_color
+    bool htf_label_show
+    color htf_label_color
+    string htf_label_size
+    bool htf_timer_show
+    color htf_timer_color
+    string htf_timer_size
     color dow_color
     string dow_size
 
 type CandleSet
-	array<Candle> candles
-	array<Imbalance> imbalances
-	CandleSettings settings
-	label tfNameTop
+    array<Candle> candles
+    array<Imbalance> imbalances
+    CandleSettings settings
+    label tfNameTop
     label tfNameBottom
-	label tfTimerTop
+    label tfTimerTop
     label tfTimerBottom
 
 type Helper
