@@ -506,32 +506,32 @@ bool showAsianRange = show_asian_session and isBelowHourValidResolution()
 
 if showAsianRange
     // Build the Asian Box
-    trl = line.new(FromDate, rth_low, ToDate, rth_low, xloc=xloc.bar_time, color=line_color, style=box_line_style, width = boxLineWidth)
+    trl = line.new(FromDate, rth_low, ToDate, rth_low, xloc=xloc.bar_time, color=color.new(line_color, 100), style=box_line_style, width = boxLineWidth)
     line.delete(trl[1])
 
-    trh = line.new(FromDate, rth_high, ToDate, rth_high, xloc=xloc.bar_time, color=line_color, style=box_line_style, width = boxLineWidth)
+    trh = line.new(FromDate, rth_high, ToDate, rth_high, xloc=xloc.bar_time, color=color.new(line_color, 100), style=box_line_style, width = boxLineWidth)
     line.delete(trh[1])
 
-    trm = line.new(FromDate, rth_mid, ToDate, rth_mid, xloc=xloc.bar_time, color=midline_color, style=middle_line_style, width = sessionLineWidth)
+    trm = line.new(FromDate, rth_mid, ToDate, rth_mid, xloc=xloc.bar_time, color=color.new(midline_color, 100), style=middle_line_style, width = sessionLineWidth)
     line.delete(trm[1])
 
-    startBox = line.new(FromDate, rth_high, FromDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=line_color, style=box_line_style, width=boxLineWidth)
+    startBox = line.new(FromDate, rth_high, FromDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=color.new(line_color, 100), style=box_line_style, width=boxLineWidth)
     line.delete(startBox[1])
 
-    endBox = line.new(ToDate, rth_high, ToDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=line_color, style=box_line_style, width=boxLineWidth)
+    endBox = line.new(ToDate, rth_high, ToDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=color.new(line_color, 100), style=box_line_style, width=boxLineWidth)
     line.delete(endBox[1])
     // End Section
 
     //if not inSession and inSession[1]
 
     //Apply the High / Low / Mid Session Lines for London / NY
-    tl = line.new(LineFromDate, rth_low, LineToDate, rth_low, xloc=xloc.bar_time, color=line_color, style=upperlower_line_style, width = sessionLineWidth)
+    tl = line.new(LineFromDate, rth_low, LineToDate, rth_low, xloc=xloc.bar_time, color=color.new(line_color, 100), style=upperlower_line_style, width = sessionLineWidth)
     line.delete(tl[1])
 
-    th = line.new(LineFromDate, rth_high, LineToDate, rth_high, xloc=xloc.bar_time, color=line_color, style=upperlower_line_style, width = sessionLineWidth)
+    th = line.new(LineFromDate, rth_high, LineToDate, rth_high, xloc=xloc.bar_time, color=color.new(line_color, 100), style=upperlower_line_style, width = sessionLineWidth)
     line.delete(th[1])
 
-    tm = line.new(LineFromDate, rth_mid, LineToDate, rth_mid, xloc=xloc.bar_time, color=midline_color, style=middle_line_style, width = sessionLineWidth)
+    tm = line.new(LineFromDate, rth_mid, LineToDate, rth_mid, xloc=xloc.bar_time, color=color.new(midline_color, 100), style=middle_line_style, width = sessionLineWidth)
     line.delete(tm[1])
     // End Section
 
@@ -557,9 +557,9 @@ if (not inSession and inSession[1] and showAsianRange)
 
     label.delete(sessionRangeLabel)
     if ((timeframe.isintraday or timeframe.isdaily) and showADR and (timenow - time) < (one_day * daily_adr))
-        sessionRangeLabel := label.new(labelTime, rth_low[1], "A = " + str.tostring(sessionRange) + "\nADR = " + str.tostring(to_pips(day_adr)), xloc.bar_time, yloc.price, color.new(color.black,100), label.style_label_up, text_color, labelsize)
+        sessionRangeLabel := label.new(labelTime, rth_low[1], "A = " + str.tostring(sessionRange) + "\nADR = " + str.tostring(to_pips(day_adr)), xloc.bar_time, yloc.price, color.new(color.black,100), label.style_label_up, color.new(text_color, 100), labelsize)
     else
-        sessionRangeLabel := label.new(labelTime, rth_low[1], "A = " + str.tostring(sessionRange), xloc.bar_time, yloc.price, color.new(color.black,100), label.style_label_up, text_color, labelsize)
+        sessionRangeLabel := label.new(labelTime, rth_low[1], "A = " + str.tostring(sessionRange), xloc.bar_time, yloc.price, color.new(color.black,100), label.style_label_up, color.new(text_color, 100), labelsize)
 
 if not showAsianRange and not na(sessionRangeLabel)
     label.delete(sessionRangeLabel)
