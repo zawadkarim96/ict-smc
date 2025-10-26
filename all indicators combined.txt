@@ -18,16 +18,16 @@ type Candle
 	float c
 	float h
 	float l
-    int o_time
+	int o_time
 	int o_idx
 	int c_idx
 	int h_idx
 	int l_idx
-    string dow
+	string dow
 	box body
 	line wick_up
 	line wick_down
-    label dow_label
+	label dow_label
 
 type Trace
 	line o
@@ -49,61 +49,61 @@ type CandleSettings
 	int max_display
 
 type Settings
-    int max_sets
-    color bull_body
-    color bull_border
-    color bull_wick
-    color bear_body
-    color bear_border
-    color bear_wick
-    int offset
-    int buffer
-    int htf_buffer
-    int width
-    bool use_custom_daily
-    string custom_daily
-    bool daily_name
-    bool trace_show
-    color trace_o_color
-    string trace_o_style
-    int trace_o_size
-    color trace_c_color
-    string trace_c_style
-    int trace_c_size
-    color trace_h_color
-    string trace_h_style
-    int trace_h_size
-    color trace_l_color
-    string trace_l_style
-    int trace_l_size
-    string trace_anchor
-    bool trace_extend
-    bool label_show
-    color label_color
-    string label_size
-    string label_position
-    string label_alignment
-    bool fvg_show
-    color fvg_color
-    bool vi_show
-    color vi_color
-    bool htf_label_show
-    color htf_label_color
-    string htf_label_size
-    bool htf_timer_show
-    color htf_timer_color
-    string htf_timer_size
-    color dow_color
-    string dow_size
+	int max_sets
+	color bull_body
+	color bull_border
+	color bull_wick
+	color bear_body
+	color bear_border
+	color bear_wick
+	int offset
+	int buffer
+	int htf_buffer
+	int width
+	bool use_custom_daily
+	string custom_daily
+	bool daily_name
+	bool trace_show
+	color trace_o_color
+	string trace_o_style
+	int trace_o_size
+	color trace_c_color
+	string trace_c_style
+	int trace_c_size
+	color trace_h_color
+	string trace_h_style
+	int trace_h_size
+	color trace_l_color
+	string trace_l_style
+	int trace_l_size
+	string trace_anchor
+	bool trace_extend
+	bool label_show
+	color label_color
+	string label_size
+	string label_position
+	string label_alignment
+	bool fvg_show
+	color fvg_color
+	bool vi_show
+	color vi_color
+	bool htf_label_show
+	color htf_label_color
+	string htf_label_size
+	bool htf_timer_show
+	color htf_timer_color
+	string htf_timer_size
+	color dow_color
+	string dow_size
 
 type CandleSet
-    array<Candle> candles
-    array<Imbalance> imbalances
-    CandleSettings settings
-    label tfNameTop
-    label tfNameBottom
-    label tfTimerTop
-    label tfTimerBottom
+	array<Candle> candles
+	array<Imbalance> imbalances
+	CandleSettings settings
+	label tfNameTop
+	label tfNameBottom
+	label tfTimerTop
+	label tfTimerBottom
 
 type Helper
 	string name = 'Helper'
@@ -1946,63 +1946,63 @@ isDark     = r < 80 and g < 80 and b < 80
 //User Defined Types
 //-----------------------------------------------------------------------------{
 type ZZ 
-    int   [] d
-    int   [] x 
-    float [] y 
-    bool  [] b
+	int   [] d
+	int   [] x 
+	float [] y 
+	bool  [] b
 
 type ln_d
-    line  l
-    int   d
+	line  l
+	int   d
 
 type _2ln_lb
-    line  l1
-    line  l2
-    label lb
+	line  l1
+	line  l2
+	label lb
 
 type bx_ln
-    box   b 
-    line  l 
+	box   b 
+	line  l 
 
 type bx_ln_lb
-    box   bx
-    line  ln
-    label lb 
+	box   bx
+	line  ln
+	label lb 
 
 type mss 
-    int     dir
-    line [] l_mssBl
-    line [] l_mssBr
-    line [] l_bosBl
-    line [] l_bosBr
-    label[] lbMssBl
-    label[] lbMssBr
-    label[] lbBosBl
-    label[] lbBosBr
+	int     dir
+	line [] l_mssBl
+	line [] l_mssBr
+	line [] l_bosBl
+	line [] l_bosBr
+	label[] lbMssBl
+	label[] lbMssBr
+	label[] lbBosBl
+	label[] lbBosBr
 
 type liq
-    box   bx
-    bool  broken
-    bool  brokenTop
-    bool  brokenBtm
-    line  ln
+	box   bx
+	bool  broken
+	bool  brokenTop
+	bool  brokenBtm
+	line  ln
 
 type ob
-    float   top       = na
-    float   btm       = na
-    int     loc       = bar_index
-    bool    breaker   = false
-    int     break_loc = na
+	float   top       = na
+	float   btm       = na
+	int     loc       = bar_index
+	bool    breaker   = false
+	int     break_loc = na
 
 type swing
-    float y = na
-    int   x = na
-    bool  crossed = false
+	float y = na
+	int   x = na
+	bool  crossed = false
 
 type FVG 
-    box box 
-    bool active
-    int  pos 
+	box box 
+	bool active
+	int  pos 
 
 var mss MSS = mss.new(
  0
@@ -3112,22 +3112,22 @@ discountZoneColorInput          = input.color(  GREEN,      'Discount Zone',    
 // @field bullishFairValueGap       fair value gap custom alert
 // @field bearishFairValueGap       fair value gap custom alert
 type alerts
-    bool internalBullishBOS         = false
-    bool internalBearishBOS         = false
-    bool internalBullishCHoCH       = false
-    bool internalBearishCHoCH       = false
-    bool swingBullishBOS            = false
-    bool swingBearishBOS            = false
-    bool swingBullishCHoCH          = false
-    bool swingBearishCHoCH          = false
-    bool internalBullishOrderBlock  = false
-    bool internalBearishOrderBlock  = false
-    bool swingBullishOrderBlock     = false
-    bool swingBearishOrderBlock     = false
-    bool equalHighs                 = false
-    bool equalLows                  = false
-    bool bullishFairValueGap        = false
-    bool bearishFairValueGap        = false
+	bool internalBullishBOS         = false
+	bool internalBearishBOS         = false
+	bool internalBullishCHoCH       = false
+	bool internalBearishCHoCH       = false
+	bool swingBullishBOS            = false
+	bool swingBearishBOS            = false
+	bool swingBullishCHoCH          = false
+	bool swingBearishCHoCH          = false
+	bool internalBullishOrderBlock  = false
+	bool internalBearishOrderBlock  = false
+	bool swingBullishOrderBlock     = false
+	bool swingBearishOrderBlock     = false
+	bool equalHighs                 = false
+	bool equalLows                  = false
+	bool bullishFairValueGap        = false
+	bool bearishFairValueGap        = false
 
 // @type                            UDT representing last swing extremes (top & bottom)
 // @field top                       last top swing price
@@ -3137,12 +3137,12 @@ type alerts
 // @field lastTopTime               last top swing time
 // @field lastBottomTime            last bottom swing time
 type trailingExtremes
-    float top
-    float bottom
-    int barTime
-    int barIndex
-    int lastTopTime
-    int lastBottomTime
+	float top
+	float bottom
+	int barTime
+	int barIndex
+	int lastTopTime
+	int lastBottomTime
 
 // @type                            UDT representing Fair Value Gaps
 // @field top                       top price
@@ -3151,23 +3151,23 @@ type trailingExtremes
 // @field topBox                    top box
 // @field bottomBox                 bottom box
 type fairValueGap
-    float top
-    float bottom
-    int bias
-    box topBox
-    box bottomBox
+	float top
+	float bottom
+	int bias
+	box topBox
+	box bottomBox
 
 // @type                            UDT representing trend bias
 // @field bias                      BULLISH or BEARISH
 type trend
-    int bias    
+	int bias    
 
 // @type                            UDT representing Equal Highs Lows display
 // @field l_ine                     displayed line
 // @field l_abel                    displayed label
 type equalDisplay
-    line l_ine      = na
-    label l_abel    = na
+	line l_ine      = na
+	label l_abel    = na
 
 // @type                            UDT representing a pivot point (swing point) 
 // @field currentLevel              current price level
@@ -3176,11 +3176,11 @@ type equalDisplay
 // @field barTime                   bar time
 // @field barIndex                  bar index    
 type pivot
-    float currentLevel
-    float lastLevel
-    bool crossed
-    int barTime     = time
-    int barIndex    = bar_index
+	float currentLevel
+	float lastLevel
+	bool crossed
+	int barTime     = time
+	int barIndex    = bar_index
 
 // @type                            UDT representing an order block
 // @field barHigh                   bar high
@@ -3188,10 +3188,10 @@ type pivot
 // @field barTime                   bar time
 // @field bias                      BULLISH or BEARISH
 type orderBlock
-    float barHigh
-    float barLow
-    int barTime    
-    int bias
+	float barHigh
+	float barLow
+	int barTime    
+	int bias
 
 // @variable                        current swing pivot high    
 var pivot swingHigh                 = pivot.new(na,na,false)
