@@ -210,7 +210,7 @@ settings.bear_border            := input.color(color.new(color.black, 10), '', i
 settings.bull_wick              := input.color(color.new(color.black, 10), 'Wick  ', inline = 'wick', group=group_style)
 settings.bear_wick              := input.color(color.new(color.black, 10), '', inline = 'wick', group=group_style)
 
-offsetInput                     = input.int(10, 'padding from current candles', group=group_style)
+offsetInput                     = input.int(60, 'padding from current candles', group=group_style)
 settings.offset                 := offsetInput < 1 ? 1 : offsetInput
 bufferInput                     = input.int(1, 'space between candles', group=group_style)
 settings.buffer                 := bufferInput < 1 ? 1 : bufferInput > 4 ? 4 : bufferInput
@@ -627,9 +627,18 @@ method Monitor(CandleSet candleSet) =>
         log.info('dow: {1} |{0}|', candle.dow, candleSet.settings.htf)
         bull = candle.c > candle.o
 
-        candle.body := box.new(bar_index, math.max(candle.o, candle.c), bar_index + 2, math.min(candle.o, candle.c), bull ? settings.bull_border : settings.bear_border, 1, bgcolor = bull ? settings.bull_body : settings.bear_body)
-        candle.wick_up := line.new(bar_index + 1, candle.h, bar_index, math.max(candle.o, candle.c), color = bull ? settings.bull_wick : settings.bear_wick)
-        candle.wick_down := line.new(bar_index + 1, math.min(candle.o, candle.c), bar_index, candle.l, color = bull ? settings.bull_wick : settings.bear_wick)
+        bool draw = bar_index < last_bar_index - 2
+
+        candle.body := box.new(
+            bar_index, math.max(candle.o, candle.c),
+            bar_index + 2, math.min(candle.o, candle.c),
+            border_color = draw ? (bull ? settings.bull_border : settings.bear_border) : color_transparent,
+            border_width = 1,
+            bgcolor = draw ? (bull ? settings.bull_body : settings.bear_body) : color_transparent)
+        candle.wick_up := line.new(bar_index + 1, candle.h, bar_index, math.max(candle.o, candle.c),
+            color = draw ? (bull ? settings.bull_wick : settings.bear_wick) : color_transparent)
+        candle.wick_down := line.new(bar_index + 1, math.min(candle.o, candle.c), bar_index, candle.l,
+            color = draw ? (bull ? settings.bull_wick : settings.bear_wick) : color_transparent)
 
         candleSet.candles.unshift(candle)
 
