@@ -675,16 +675,20 @@ method Update(CandleSet candleSet, int offset, bool showTrace) =>
             float boxRight = box.get_right(candle.body)
             float wickUpAnchor = nz(line.get_x1(candle.wick_up), boxRight)
             float wickDownAnchor = nz(line.get_x1(candle.wick_down), boxRight)
+            int boxLeftIdx = int(math.round(boxLeft))
+            int boxRightIdx = int(math.round(boxRight))
+            int wickUpAnchorIdx = int(math.round(wickUpAnchor))
+            int wickDownAnchorIdx = int(math.round(wickDownAnchor))
 
             if bar_index - candle.o_idx < 5000
-                float openStart = settings.trace_extend ? candle.o_idx : boxLeft
-                float openEnd = settings.trace_extend ? boxLeft : boxRight
+                int openStartIdx = settings.trace_extend ? candle.o_idx : boxLeftIdx
+                int openEndIdx = settings.trace_extend ? boxLeftIdx : boxRightIdx
                 if na(trace.o)
-                    trace.o := line.new(openStart, candle.o, openEnd, candle.o, xloc = xloc.bar_index, color = settings.trace_o_color, style = helper.LineStyle(settings.trace_o_style), width = settings.trace_o_size)
+                    trace.o := line.new(openStartIdx, candle.o, openEndIdx, candle.o, xloc = xloc.bar_index, color = settings.trace_o_color, style = helper.LineStyle(settings.trace_o_style), width = settings.trace_o_size)
                     trace.o
                 else
-                    line.set_xy1(trace.o, openStart, candle.o)
-                    line.set_xy2(trace.o, openEnd, candle.o)
+                    line.set_xy1(trace.o, openStartIdx, candle.o)
+                    line.set_xy2(trace.o, openEndIdx, candle.o)
 
                 if settings.label_show
                     if na(trace.o_l)
@@ -695,14 +699,14 @@ method Update(CandleSet candleSet, int offset, bool showTrace) =>
                         label.set_text(trace.o_l, str.tostring(candle.o))
 
             if bar_index - candle.c_idx < 5000
-                float closeStart = settings.trace_extend ? candle.c_idx : boxLeft
-                float closeEnd = settings.trace_extend ? boxLeft : boxRight
+                int closeStartIdx = settings.trace_extend ? candle.c_idx : boxLeftIdx
+                int closeEndIdx = settings.trace_extend ? boxLeftIdx : boxRightIdx
                 if na(trace.c)
-                    trace.c := line.new(closeStart, candle.c, closeEnd, candle.c, xloc = xloc.bar_index, color = settings.trace_c_color, style = helper.LineStyle(settings.trace_c_style), width = settings.trace_c_size)
+                    trace.c := line.new(closeStartIdx, candle.c, closeEndIdx, candle.c, xloc = xloc.bar_index, color = settings.trace_c_color, style = helper.LineStyle(settings.trace_c_style), width = settings.trace_c_size)
                     trace.c
                 else
-                    line.set_xy1(trace.c, closeStart, candle.c)
-                    line.set_xy2(trace.c, closeEnd, candle.c)
+                    line.set_xy1(trace.c, closeStartIdx, candle.c)
+                    line.set_xy2(trace.c, closeEndIdx, candle.c)
 
                 if settings.label_show
                     if na(trace.c_l)
@@ -713,14 +717,14 @@ method Update(CandleSet candleSet, int offset, bool showTrace) =>
                         label.set_text(trace.c_l, str.tostring(candle.c))
 
             if bar_index - candle.h_idx < 5000
-                float highStart = settings.trace_extend ? candle.h_idx : boxLeft
-                float highEnd = settings.trace_extend ? wickUpAnchor : boxRight
+                int highStartIdx = settings.trace_extend ? candle.h_idx : boxLeftIdx
+                int highEndIdx = settings.trace_extend ? wickUpAnchorIdx : boxRightIdx
                 if na(trace.h)
-                    trace.h := line.new(highStart, candle.h, highEnd, candle.h, xloc = xloc.bar_index, color = settings.trace_h_color, style = helper.LineStyle(settings.trace_h_style), width = settings.trace_h_size)
+                    trace.h := line.new(highStartIdx, candle.h, highEndIdx, candle.h, xloc = xloc.bar_index, color = settings.trace_h_color, style = helper.LineStyle(settings.trace_h_style), width = settings.trace_h_size)
                     trace.h
                 else
-                    line.set_xy1(trace.h, highStart, candle.h)
-                    line.set_xy2(trace.h, highEnd, candle.h)
+                    line.set_xy1(trace.h, highStartIdx, candle.h)
+                    line.set_xy2(trace.h, highEndIdx, candle.h)
 
                 if settings.label_show
                     if na(trace.h_l)
@@ -731,14 +735,14 @@ method Update(CandleSet candleSet, int offset, bool showTrace) =>
                         label.set_text(trace.h_l, str.tostring(candle.h))
 
             if bar_index - candle.l_idx < 5000
-                float lowStart = settings.trace_extend ? candle.l_idx : boxLeft
-                float lowEnd = settings.trace_extend ? wickDownAnchor : boxRight
+                int lowStartIdx = settings.trace_extend ? candle.l_idx : boxLeftIdx
+                int lowEndIdx = settings.trace_extend ? wickDownAnchorIdx : boxRightIdx
                 if na(trace.l)
-                    trace.l := line.new(lowStart, candle.l, lowEnd, candle.l, xloc = xloc.bar_index, color = settings.trace_l_color, style = helper.LineStyle(settings.trace_l_style), width = settings.trace_l_size)
+                    trace.l := line.new(lowStartIdx, candle.l, lowEndIdx, candle.l, xloc = xloc.bar_index, color = settings.trace_l_color, style = helper.LineStyle(settings.trace_l_style), width = settings.trace_l_size)
                     trace.l
                 else
-                    line.set_xy1(trace.l, lowStart, candle.l)
-                    line.set_xy2(trace.l, lowEnd, candle.l)
+                    line.set_xy1(trace.l, lowStartIdx, candle.l)
+                    line.set_xy2(trace.l, lowEndIdx, candle.l)
 
                 if settings.label_show
                     if na(trace.l_l)
