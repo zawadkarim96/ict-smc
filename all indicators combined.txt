@@ -141,8 +141,8 @@ showHiLoTime = input.bool(defval=false, title="Show Hi / Low Time of Day (Always
 // Asian Input Convertions
 line_color = user_box_line_color == "aqua" ? color.aqua : user_box_line_color == "black" ? color.black : user_box_line_color == "blue" ? color.blue : user_box_line_color == "fuchsia" ? color.fuchsia : user_box_line_color == "gray" ? color.gray : user_box_line_color == "green" ? color.green : user_box_line_color == "lime" ? color.lime : user_box_line_color == "maroon" ? color.maroon : user_box_line_color == "navy" ? color.navy : user_box_line_color == "olive" ? color.olive : user_box_line_color == "orange" ? color.orange : user_box_line_color == "purple" ? color.purple : user_box_line_color == "red" ? color.red : user_box_line_color == "silver" ? color.silver : user_box_line_color == "teal" ? color.teal : user_box_line_color == "white" ? color.white : user_box_line_color == "yellow" ? color.yellow : color.black
 midline_color = user_midline_color == "aqua" ? color.aqua : user_midline_color == "black" ? color.black : user_midline_color == "blue" ? color.blue : user_midline_color == "fuchsia" ? color.fuchsia : user_midline_color == "gray" ? color.gray : user_midline_color == "green" ? color.green : user_midline_color == "lime" ? color.lime : user_midline_color == "maroon" ? color.maroon : user_midline_color == "navy" ? color.navy : user_midline_color == "olive" ? color.olive : user_midline_color == "orange" ? color.orange : user_midline_color == "purple" ? color.purple : user_midline_color == "red" ? color.red : user_midline_color == "silver" ? color.silver : user_midline_color == "teal" ? color.teal : user_midline_color == "white" ? color.white : user_midline_color == "yellow" ? color.yellow : color.black
-line_color := show_asian_session ? line_color : na
-midline_color := show_asian_session ? midline_color : na
+line_border_color = show_asian_session ? color.new(line_color, 100) : na
+midline_border_color = show_asian_session ? color.new(midline_color, 100) : na
 text_color = user_text_color == "aqua" ? color.aqua : user_text_color == "black" ? color.black : user_text_color == "blue" ? color.blue : user_text_color == "fuchsia" ? color.fuchsia : user_text_color == "gray" ? color.gray : user_text_color == "green" ? color.green : user_text_color == "lime" ? color.lime : user_text_color == "maroon" ? color.maroon : user_text_color == "navy" ? color.navy : user_text_color == "olive" ? color.olive : user_text_color == "orange" ? color.orange : user_text_color == "purple" ? color.purple : user_text_color == "red" ? color.red : user_text_color == "silver" ? color.silver : user_text_color == "teal" ? color.teal : user_text_color == "white" ? color.white : user_text_color == "yellow" ? color.yellow : color.black
 
 box_line_style = user_box_line_style == "solid" ? line.style_solid : user_box_line_style == "dashed" ? line.style_dashed : user_box_line_style == "dotted" ? line.style_dotted : line.style_solid
@@ -155,6 +155,8 @@ labelsize = user_label_size == "tiny" ? size.tiny : user_label_size == "small" ?
 // London Input Convertions
 lline_color = luser_box_line_color == "aqua" ? color.aqua : luser_box_line_color == "black" ? color.black : luser_box_line_color == "blue" ? color.blue : luser_box_line_color == "fuchsia" ? color.fuchsia : luser_box_line_color == "gray" ? color.gray : luser_box_line_color == "green" ? color.green : luser_box_line_color == "lime" ? color.lime : luser_box_line_color == "maroon" ? color.maroon : luser_box_line_color == "navy" ? color.navy : luser_box_line_color == "olive" ? color.olive : luser_box_line_color == "orange" ? color.orange : luser_box_line_color == "purple" ? color.purple : luser_box_line_color == "red" ? color.red : luser_box_line_color == "silver" ? color.silver : luser_box_line_color == "teal" ? color.teal : luser_box_line_color == "white" ? color.white : luser_box_line_color == "yellow" ? color.yellow : color.black
 lmidline_color = luser_midline_color == "aqua" ? color.aqua : luser_midline_color == "black" ? color.black : luser_midline_color == "blue" ? color.blue : luser_midline_color == "fuchsia" ? color.fuchsia : luser_midline_color == "gray" ? color.gray : luser_midline_color == "green" ? color.green : luser_midline_color == "lime" ? color.lime : luser_midline_color == "maroon" ? color.maroon : luser_midline_color == "navy" ? color.navy : luser_midline_color == "olive" ? color.olive : luser_midline_color == "orange" ? color.orange : luser_midline_color == "purple" ? color.purple : luser_midline_color == "red" ? color.red : luser_midline_color == "silver" ? color.silver : luser_midline_color == "teal" ? color.teal : luser_midline_color == "white" ? color.white : luser_midline_color == "yellow" ? color.yellow : color.black
+lline_border_color = show_london_session ? color.new(lline_color, 100) : na
+lmidline_border_color = show_london_session ? color.new(lmidline_color, 100) : na
 ltext_color = luser_text_color == "aqua" ? color.aqua : luser_text_color == "black" ? color.black : luser_text_color == "blue" ? color.blue : luser_text_color == "fuchsia" ? color.fuchsia : luser_text_color == "gray" ? color.gray : luser_text_color == "green" ? color.green : luser_text_color == "lime" ? color.lime : luser_text_color == "maroon" ? color.maroon : luser_text_color == "navy" ? color.navy : luser_text_color == "olive" ? color.olive : luser_text_color == "orange" ? color.orange : luser_text_color == "purple" ? color.purple : luser_text_color == "red" ? color.red : luser_text_color == "silver" ? color.silver : luser_text_color == "teal" ? color.teal : luser_text_color == "white" ? color.white : luser_text_color == "yellow" ? color.yellow : color.black
 
 lbox_line_style = luser_box_line_style == "solid" ? line.style_solid : luser_box_line_style == "dashed" ? line.style_dashed : luser_box_line_style == "dotted" ? line.style_dotted : line.style_solid
@@ -167,6 +169,8 @@ llabelsize = luser_label_size == "tiny" ? size.tiny : luser_label_size == "small
 // New York Input Convertions
 nline_color = nuser_box_line_color == "aqua" ? color.aqua : nuser_box_line_color == "black" ? color.black : nuser_box_line_color == "blue" ? color.blue : nuser_box_line_color == "fuchsia" ? color.fuchsia : nuser_box_line_color == "gray" ? color.gray : nuser_box_line_color == "green" ? color.green : nuser_box_line_color == "lime" ? color.lime : nuser_box_line_color == "maroon" ? color.maroon : nuser_box_line_color == "navy" ? color.navy : nuser_box_line_color == "olive" ? color.olive : nuser_box_line_color == "orange" ? color.orange : nuser_box_line_color == "purple" ? color.purple : nuser_box_line_color == "red" ? color.red : nuser_box_line_color == "silver" ? color.silver : nuser_box_line_color == "teal" ? color.teal : nuser_box_line_color == "white" ? color.white : nuser_box_line_color == "yellow" ? color.yellow : color.black
 nmidline_color = nuser_midline_color == "aqua" ? color.aqua : nuser_midline_color == "black" ? color.black : nuser_midline_color == "blue" ? color.blue : nuser_midline_color == "fuchsia" ? color.fuchsia : nuser_midline_color == "gray" ? color.gray : nuser_midline_color == "green" ? color.green : nuser_midline_color == "lime" ? color.lime : nuser_midline_color == "maroon" ? color.maroon : nuser_midline_color == "navy" ? color.navy : nuser_midline_color == "olive" ? color.olive : nuser_midline_color == "orange" ? color.orange : nuser_midline_color == "purple" ? color.purple : nuser_midline_color == "red" ? color.red : nuser_midline_color == "silver" ? color.silver : nuser_midline_color == "teal" ? color.teal : nuser_midline_color == "white" ? color.white : nuser_midline_color == "yellow" ? color.yellow : color.black
+nline_border_color = show_ny_session ? color.new(nline_color, 100) : na
+nmidline_border_color = show_ny_session ? color.new(nmidline_color, 100) : na
 ntext_color = nuser_text_color == "aqua" ? color.aqua : nuser_text_color == "black" ? color.black : nuser_text_color == "blue" ? color.blue : nuser_text_color == "fuchsia" ? color.fuchsia : nuser_text_color == "gray" ? color.gray : nuser_text_color == "green" ? color.green : nuser_text_color == "lime" ? color.lime : nuser_text_color == "maroon" ? color.maroon : nuser_text_color == "navy" ? color.navy : nuser_text_color == "olive" ? color.olive : nuser_text_color == "orange" ? color.orange : nuser_text_color == "purple" ? color.purple : nuser_text_color == "red" ? color.red : nuser_text_color == "silver" ? color.silver : nuser_text_color == "teal" ? color.teal : nuser_text_color == "white" ? color.white : nuser_text_color == "yellow" ? color.yellow : color.black
 
 nbox_line_style = nuser_box_line_style == "solid" ? line.style_solid : nuser_box_line_style == "dashed" ? line.style_dashed : nuser_box_line_style == "dotted" ? line.style_dotted : line.style_solid
@@ -506,32 +510,32 @@ bool showAsianRange = show_asian_session and isBelowHourValidResolution()
 
 if showAsianRange
     // Build the Asian Box
-    trl = line.new(FromDate, rth_low, ToDate, rth_low, xloc=xloc.bar_time, color=color.new(line_color, 100), style=box_line_style, width = boxLineWidth)
+    trl = line.new(FromDate, rth_low, ToDate, rth_low, xloc=xloc.bar_time, color=line_border_color, style=box_line_style, width = boxLineWidth)
     line.delete(trl[1])
 
-    trh = line.new(FromDate, rth_high, ToDate, rth_high, xloc=xloc.bar_time, color=color.new(line_color, 100), style=box_line_style, width = boxLineWidth)
+    trh = line.new(FromDate, rth_high, ToDate, rth_high, xloc=xloc.bar_time, color=line_border_color, style=box_line_style, width = boxLineWidth)
     line.delete(trh[1])
 
-    trm = line.new(FromDate, rth_mid, ToDate, rth_mid, xloc=xloc.bar_time, color=color.new(midline_color, 100), style=middle_line_style, width = sessionLineWidth)
+    trm = line.new(FromDate, rth_mid, ToDate, rth_mid, xloc=xloc.bar_time, color=midline_border_color, style=middle_line_style, width = sessionLineWidth)
     line.delete(trm[1])
 
-    startBox = line.new(FromDate, rth_high, FromDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=color.new(line_color, 100), style=box_line_style, width=boxLineWidth)
+    startBox = line.new(FromDate, rth_high, FromDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=line_border_color, style=box_line_style, width=boxLineWidth)
     line.delete(startBox[1])
 
-    endBox = line.new(ToDate, rth_high, ToDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=color.new(line_color, 100), style=box_line_style, width=boxLineWidth)
+    endBox = line.new(ToDate, rth_high, ToDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=line_border_color, style=box_line_style, width=boxLineWidth)
     line.delete(endBox[1])
     // End Section
 
     //if not inSession and inSession[1]
 
     //Apply the High / Low / Mid Session Lines for London / NY
-    tl = line.new(LineFromDate, rth_low, LineToDate, rth_low, xloc=xloc.bar_time, color=color.new(line_color, 100), style=upperlower_line_style, width = sessionLineWidth)
+    tl = line.new(LineFromDate, rth_low, LineToDate, rth_low, xloc=xloc.bar_time, color=line_border_color, style=upperlower_line_style, width = sessionLineWidth)
     line.delete(tl[1])
 
-    th = line.new(LineFromDate, rth_high, LineToDate, rth_high, xloc=xloc.bar_time, color=color.new(line_color, 100), style=upperlower_line_style, width = sessionLineWidth)
+    th = line.new(LineFromDate, rth_high, LineToDate, rth_high, xloc=xloc.bar_time, color=line_border_color, style=upperlower_line_style, width = sessionLineWidth)
     line.delete(th[1])
 
-    tm = line.new(LineFromDate, rth_mid, LineToDate, rth_mid, xloc=xloc.bar_time, color=color.new(midline_color, 100), style=middle_line_style, width = sessionLineWidth)
+    tm = line.new(LineFromDate, rth_mid, LineToDate, rth_mid, xloc=xloc.bar_time, color=midline_border_color, style=middle_line_style, width = sessionLineWidth)
     line.delete(tm[1])
     // End Section
 
@@ -611,19 +615,19 @@ if (show_london_session and isValidResolution())
     
     //if inSession
     // Build the Asian Box
-    ltrl = line.new(LondonFromDate, london_rth_low, LondonToDate, london_rth_low, xloc=xloc.bar_time, color=lline_color, style=lbox_line_style, width = lboxLineWidth)
+    ltrl = line.new(LondonFromDate, london_rth_low, LondonToDate, london_rth_low, xloc=xloc.bar_time, color=lline_border_color, style=lbox_line_style, width = lboxLineWidth)
     line.delete(ltrl[1])
     
-    ltrh = line.new(LondonFromDate, london_rth_high, LondonToDate, london_rth_high, xloc=xloc.bar_time, color=lline_color, style=lbox_line_style, width = lboxLineWidth)
+    ltrh = line.new(LondonFromDate, london_rth_high, LondonToDate, london_rth_high, xloc=xloc.bar_time, color=lline_border_color, style=lbox_line_style, width = lboxLineWidth)
     line.delete(ltrh[1])
     
-    ltrm = line.new(LondonFromDate, london_rth_mid, LondonToDate, london_rth_mid, xloc=xloc.bar_time, color=lmidline_color, style=lmiddle_line_style, width = lsessionLineWidth)
+    ltrm = line.new(LondonFromDate, london_rth_mid, LondonToDate, london_rth_mid, xloc=xloc.bar_time, color=lmidline_border_color, style=lmiddle_line_style, width = lsessionLineWidth)
     line.delete(ltrm[1])
     
-    londonStartBox = line.new(LondonFromDate, london_rth_high, LondonFromDate, london_rth_low, extend=extend.none, xloc=xloc.bar_time, color=lline_color, style=lbox_line_style, width=lboxLineWidth)
+    londonStartBox = line.new(LondonFromDate, london_rth_high, LondonFromDate, london_rth_low, extend=extend.none, xloc=xloc.bar_time, color=lline_border_color, style=lbox_line_style, width=lboxLineWidth)
     line.delete(londonStartBox[1])
     
-    londonEndBox = line.new(LondonToDate, london_rth_high, LondonToDate, london_rth_low, extend=extend.none, xloc=xloc.bar_time, color=lline_color, style=lbox_line_style, width=lboxLineWidth)
+    londonEndBox = line.new(LondonToDate, london_rth_high, LondonToDate, london_rth_low, extend=extend.none, xloc=xloc.bar_time, color=lline_border_color, style=lbox_line_style, width=lboxLineWidth)
     line.delete(londonEndBox[1])
     // End Section
     
@@ -705,19 +709,19 @@ if (show_ny_session and isValidResolution())
     
     //if inSession
     // Build the Asian Box
-    ntrl = line.new(NyFromDate, ny_rth_low, NyToDate, ny_rth_low, xloc=xloc.bar_time, color=nline_color, style=nbox_line_style, width = nboxLineWidth)
+    ntrl = line.new(NyFromDate, ny_rth_low, NyToDate, ny_rth_low, xloc=xloc.bar_time, color=nline_border_color, style=nbox_line_style, width = nboxLineWidth)
     line.delete(ntrl[1])
     
-    ntrh = line.new(NyFromDate, ny_rth_high, NyToDate, ny_rth_high, xloc=xloc.bar_time, color=nline_color, style=nbox_line_style, width = nboxLineWidth)
+    ntrh = line.new(NyFromDate, ny_rth_high, NyToDate, ny_rth_high, xloc=xloc.bar_time, color=nline_border_color, style=nbox_line_style, width = nboxLineWidth)
     line.delete(ntrh[1])
     
-    ntrm = line.new(NyFromDate, ny_rth_mid, NyToDate, ny_rth_mid, xloc=xloc.bar_time, color=nmidline_color, style=nmiddle_line_style, width = nsessionLineWidth)
+    ntrm = line.new(NyFromDate, ny_rth_mid, NyToDate, ny_rth_mid, xloc=xloc.bar_time, color=nmidline_border_color, style=nmiddle_line_style, width = nsessionLineWidth)
     line.delete(ntrm[1])
     
-    nyStartBox = line.new(NyFromDate, ny_rth_high, NyFromDate, ny_rth_low, extend=extend.none, xloc=xloc.bar_time, color=nline_color, style=nbox_line_style, width=nboxLineWidth)
+    nyStartBox = line.new(NyFromDate, ny_rth_high, NyFromDate, ny_rth_low, extend=extend.none, xloc=xloc.bar_time, color=nline_border_color, style=nbox_line_style, width=nboxLineWidth)
     line.delete(nyStartBox[1])
     
-    nyEndBox = line.new(NyToDate, ny_rth_high, NyToDate, ny_rth_low, extend=extend.none, xloc=xloc.bar_time, color=nline_color, style=nbox_line_style, width=nboxLineWidth)
+    nyEndBox = line.new(NyToDate, ny_rth_high, NyToDate, ny_rth_low, extend=extend.none, xloc=xloc.bar_time, color=nline_border_color, style=nbox_line_style, width=nboxLineWidth)
     line.delete(nyEndBox[1])
     // End Section
     
