@@ -845,6 +845,7 @@ user_box_line_color = input.string(title="Asian Range Border Color", defval="blu
 boxLineWidthInput = input.int(title="Asian Box Line Width", defval=1)
 boxLineWidth = boxLineWidthInput < 0 ? 0 : boxLineWidthInput > 10 ? 10 : boxLineWidthInput
 user_box_line_style = input.string(title="Asian Box Line Style", defval="solid", options=["solid", "dashed", "dotted"])
+asian_boundaries_transparent = input.bool(defval=false, title="Transparent Asian Session Borders")
 
 sessionLineWidthInput = input.int(title="Session High / Low / Mid Line Width", defval=2)
 sessionLineWidth = sessionLineWidthInput < 0 ? 0 : sessionLineWidthInput > 20 ? 20 : sessionLineWidthInput
@@ -874,6 +875,7 @@ luser_box_line_color = input.string(title="London Range Border Color", defval="t
 lboxLineWidthInput = input.int(title="London Box Line Width", defval=1)
 lboxLineWidth = lboxLineWidthInput < 0 ? 0 : lboxLineWidthInput > 10 ? 10 : lboxLineWidthInput
 luser_box_line_style = input.string(title="London Box Line Style", defval="solid", options=["solid", "dashed", "dotted"])
+london_boundaries_transparent = input.bool(defval=false, title="Transparent London Session Borders")
 
 lsessionLineWidthInput = input.int(title="Session High / Low / Mid Line Width", defval=2)
 lsessionLineWidth = lsessionLineWidthInput < 0 ? 0 : lsessionLineWidthInput > 20 ? 20 : lsessionLineWidthInput
@@ -903,6 +905,7 @@ nuser_box_line_color = input.string(title="New York Range Border Color", defval=
 nboxLineWidthInput = input.int(title="New York Box Line Width", defval=1)
 nboxLineWidth = nboxLineWidthInput < 0 ? 0 : nboxLineWidthInput > 10 ? 10 : nboxLineWidthInput
 nuser_box_line_style = input.string(title="New York Box Line Style", defval="solid", options=["solid", "dashed", "dotted"])
+ny_boundaries_transparent = input.bool(defval=false, title="Transparent New York Session Borders")
 
 nsessionLineWidthInput = input.int(title="Session High / Low / Mid Line Width", defval=2)
 nsessionLineWidth = nsessionLineWidthInput < 0 ? 0 : nsessionLineWidthInput > 20 ? 20 : nsessionLineWidthInput
@@ -957,6 +960,7 @@ line_color = user_box_line_color == "aqua" ? color.aqua : user_box_line_color ==
 midline_color = user_midline_color == "aqua" ? color.aqua : user_midline_color == "black" ? color.black : user_midline_color == "blue" ? color.blue : user_midline_color == "fuchsia" ? color.fuchsia : user_midline_color == "gray" ? color.gray : user_midline_color == "green" ? color.green : user_midline_color == "lime" ? color.lime : user_midline_color == "maroon" ? color.maroon : user_midline_color == "navy" ? color.navy : user_midline_color == "olive" ? color.olive : user_midline_color == "orange" ? color.orange : user_midline_color == "purple" ? color.purple : user_midline_color == "red" ? color.red : user_midline_color == "silver" ? color.silver : user_midline_color == "teal" ? color.teal : user_midline_color == "white" ? color.white : user_midline_color == "yellow" ? color.yellow : color.black
 line_color := show_asian_session ? line_color : na
 midline_color := show_asian_session ? midline_color : na
+color asian_boundary_color = asian_boundaries_transparent and not na(line_color) ? color.new(line_color, 100) : line_color
 text_color = user_text_color == "aqua" ? color.aqua : user_text_color == "black" ? color.black : user_text_color == "blue" ? color.blue : user_text_color == "fuchsia" ? color.fuchsia : user_text_color == "gray" ? color.gray : user_text_color == "green" ? color.green : user_text_color == "lime" ? color.lime : user_text_color == "maroon" ? color.maroon : user_text_color == "navy" ? color.navy : user_text_color == "olive" ? color.olive : user_text_color == "orange" ? color.orange : user_text_color == "purple" ? color.purple : user_text_color == "red" ? color.red : user_text_color == "silver" ? color.silver : user_text_color == "teal" ? color.teal : user_text_color == "white" ? color.white : user_text_color == "yellow" ? color.yellow : color.black
 
 box_line_style = user_box_line_style == "solid" ? line.style_solid : user_box_line_style == "dashed" ? line.style_dashed : user_box_line_style == "dotted" ? line.style_dotted : line.style_solid
@@ -970,6 +974,7 @@ labelsize = user_label_size == "tiny" ? size.tiny : user_label_size == "small" ?
 lline_color = luser_box_line_color == "aqua" ? color.aqua : luser_box_line_color == "black" ? color.black : luser_box_line_color == "blue" ? color.blue : luser_box_line_color == "fuchsia" ? color.fuchsia : luser_box_line_color == "gray" ? color.gray : luser_box_line_color == "green" ? color.green : luser_box_line_color == "lime" ? color.lime : luser_box_line_color == "maroon" ? color.maroon : luser_box_line_color == "navy" ? color.navy : luser_box_line_color == "olive" ? color.olive : luser_box_line_color == "orange" ? color.orange : luser_box_line_color == "purple" ? color.purple : luser_box_line_color == "red" ? color.red : luser_box_line_color == "silver" ? color.silver : luser_box_line_color == "teal" ? color.teal : luser_box_line_color == "white" ? color.white : luser_box_line_color == "yellow" ? color.yellow : color.black
 lmidline_color = luser_midline_color == "aqua" ? color.aqua : luser_midline_color == "black" ? color.black : luser_midline_color == "blue" ? color.blue : luser_midline_color == "fuchsia" ? color.fuchsia : luser_midline_color == "gray" ? color.gray : luser_midline_color == "green" ? color.green : luser_midline_color == "lime" ? color.lime : luser_midline_color == "maroon" ? color.maroon : luser_midline_color == "navy" ? color.navy : luser_midline_color == "olive" ? color.olive : luser_midline_color == "orange" ? color.orange : luser_midline_color == "purple" ? color.purple : luser_midline_color == "red" ? color.red : luser_midline_color == "silver" ? color.silver : luser_midline_color == "teal" ? color.teal : luser_midline_color == "white" ? color.white : luser_midline_color == "yellow" ? color.yellow : color.black
 ltext_color = luser_text_color == "aqua" ? color.aqua : luser_text_color == "black" ? color.black : luser_text_color == "blue" ? color.blue : luser_text_color == "fuchsia" ? color.fuchsia : luser_text_color == "gray" ? color.gray : luser_text_color == "green" ? color.green : luser_text_color == "lime" ? color.lime : luser_text_color == "maroon" ? color.maroon : luser_text_color == "navy" ? color.navy : luser_text_color == "olive" ? color.olive : luser_text_color == "orange" ? color.orange : luser_text_color == "purple" ? color.purple : luser_text_color == "red" ? color.red : luser_text_color == "silver" ? color.silver : luser_text_color == "teal" ? color.teal : luser_text_color == "white" ? color.white : luser_text_color == "yellow" ? color.yellow : color.black
+color london_boundary_color = london_boundaries_transparent and not na(lline_color) ? color.new(lline_color, 100) : lline_color
 
 lbox_line_style = luser_box_line_style == "solid" ? line.style_solid : luser_box_line_style == "dashed" ? line.style_dashed : luser_box_line_style == "dotted" ? line.style_dotted : line.style_solid
 lupperlower_line_style = luser_upperlower_line_style == "solid" ? line.style_solid : luser_upperlower_line_style == "dashed" ? line.style_dashed : luser_upperlower_line_style == "dotted" ? line.style_dotted : line.style_solid
@@ -982,6 +987,7 @@ llabelsize = luser_label_size == "tiny" ? size.tiny : luser_label_size == "small
 nline_color = nuser_box_line_color == "aqua" ? color.aqua : nuser_box_line_color == "black" ? color.black : nuser_box_line_color == "blue" ? color.blue : nuser_box_line_color == "fuchsia" ? color.fuchsia : nuser_box_line_color == "gray" ? color.gray : nuser_box_line_color == "green" ? color.green : nuser_box_line_color == "lime" ? color.lime : nuser_box_line_color == "maroon" ? color.maroon : nuser_box_line_color == "navy" ? color.navy : nuser_box_line_color == "olive" ? color.olive : nuser_box_line_color == "orange" ? color.orange : nuser_box_line_color == "purple" ? color.purple : nuser_box_line_color == "red" ? color.red : nuser_box_line_color == "silver" ? color.silver : nuser_box_line_color == "teal" ? color.teal : nuser_box_line_color == "white" ? color.white : nuser_box_line_color == "yellow" ? color.yellow : color.black
 nmidline_color = nuser_midline_color == "aqua" ? color.aqua : nuser_midline_color == "black" ? color.black : nuser_midline_color == "blue" ? color.blue : nuser_midline_color == "fuchsia" ? color.fuchsia : nuser_midline_color == "gray" ? color.gray : nuser_midline_color == "green" ? color.green : nuser_midline_color == "lime" ? color.lime : nuser_midline_color == "maroon" ? color.maroon : nuser_midline_color == "navy" ? color.navy : nuser_midline_color == "olive" ? color.olive : nuser_midline_color == "orange" ? color.orange : nuser_midline_color == "purple" ? color.purple : nuser_midline_color == "red" ? color.red : nuser_midline_color == "silver" ? color.silver : nuser_midline_color == "teal" ? color.teal : nuser_midline_color == "white" ? color.white : nuser_midline_color == "yellow" ? color.yellow : color.black
 ntext_color = nuser_text_color == "aqua" ? color.aqua : nuser_text_color == "black" ? color.black : nuser_text_color == "blue" ? color.blue : nuser_text_color == "fuchsia" ? color.fuchsia : nuser_text_color == "gray" ? color.gray : nuser_text_color == "green" ? color.green : nuser_text_color == "lime" ? color.lime : nuser_text_color == "maroon" ? color.maroon : nuser_text_color == "navy" ? color.navy : nuser_text_color == "olive" ? color.olive : nuser_text_color == "orange" ? color.orange : nuser_text_color == "purple" ? color.purple : nuser_text_color == "red" ? color.red : nuser_text_color == "silver" ? color.silver : nuser_text_color == "teal" ? color.teal : nuser_text_color == "white" ? color.white : nuser_text_color == "yellow" ? color.yellow : color.black
+color ny_boundary_color = ny_boundaries_transparent and not na(nline_color) ? color.new(nline_color, 100) : nline_color
 
 nbox_line_style = nuser_box_line_style == "solid" ? line.style_solid : nuser_box_line_style == "dashed" ? line.style_dashed : nuser_box_line_style == "dotted" ? line.style_dotted : line.style_solid
 nupperlower_line_style = nuser_upperlower_line_style == "solid" ? line.style_solid : nuser_upperlower_line_style == "dashed" ? line.style_dashed : nuser_upperlower_line_style == "dotted" ? line.style_dotted : line.style_solid
@@ -1320,29 +1326,29 @@ bool showAsianRange = show_asian_session and isBelowHourValidResolution()
 
 if showAsianRange
     // Build the Asian Box
-    trl = line.new(FromDate, rth_low, ToDate, rth_low, xloc=xloc.bar_time, color=line_color, style=box_line_style, width = boxLineWidth)
+    trl = line.new(FromDate, rth_low, ToDate, rth_low, xloc=xloc.bar_time, color=asian_boundary_color, style=box_line_style, width = boxLineWidth)
     line.delete(trl[1])
 
-    trh = line.new(FromDate, rth_high, ToDate, rth_high, xloc=xloc.bar_time, color=line_color, style=box_line_style, width = boxLineWidth)
+    trh = line.new(FromDate, rth_high, ToDate, rth_high, xloc=xloc.bar_time, color=asian_boundary_color, style=box_line_style, width = boxLineWidth)
     line.delete(trh[1])
 
     trm = line.new(FromDate, rth_mid, ToDate, rth_mid, xloc=xloc.bar_time, color=midline_color, style=middle_line_style, width = sessionLineWidth)
     line.delete(trm[1])
 
-    startBox = line.new(FromDate, rth_high, FromDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=line_color, style=box_line_style, width=boxLineWidth)
+    startBox = line.new(FromDate, rth_high, FromDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=asian_boundary_color, style=box_line_style, width=boxLineWidth)
     line.delete(startBox[1])
 
-    endBox = line.new(ToDate, rth_high, ToDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=line_color, style=box_line_style, width=boxLineWidth)
+    endBox = line.new(ToDate, rth_high, ToDate, rth_low, extend=extend.none, xloc=xloc.bar_time, color=asian_boundary_color, style=box_line_style, width=boxLineWidth)
     line.delete(endBox[1])
     // End Section
 
     //if not inSession and inSession[1]
 
     //Apply the High / Low / Mid Session Lines for London / NY
-    tl = line.new(LineFromDate, rth_low, LineToDate, rth_low, xloc=xloc.bar_time, color=line_color, style=upperlower_line_style, width = sessionLineWidth)
+    tl = line.new(LineFromDate, rth_low, LineToDate, rth_low, xloc=xloc.bar_time, color=asian_boundary_color, style=upperlower_line_style, width = sessionLineWidth)
     line.delete(tl[1])
 
-    th = line.new(LineFromDate, rth_high, LineToDate, rth_high, xloc=xloc.bar_time, color=line_color, style=upperlower_line_style, width = sessionLineWidth)
+    th = line.new(LineFromDate, rth_high, LineToDate, rth_high, xloc=xloc.bar_time, color=asian_boundary_color, style=upperlower_line_style, width = sessionLineWidth)
     line.delete(th[1])
 
     tm = line.new(LineFromDate, rth_mid, LineToDate, rth_mid, xloc=xloc.bar_time, color=midline_color, style=middle_line_style, width = sessionLineWidth)
@@ -1354,18 +1360,16 @@ if showAsianRange
 highRes = rth_high
 lowRes = rth_low
 
-lineColor = color.new(line_color, 100)
-asianFillColor = color.new(line_color, 90)
-asianBackgroundColor = color.new(line_color, 92)
+lineColor = color.new(color.white,100)
 //timerange(res, sess) => not na(time(res, sess)) ? 1 : 0
 
 //Plot Statements For Opening Range Lines
 openRangeHigh = plot(timerange(timeframe.period, rth_fill_ses) and showAsianRange ? highRes : na, color=lineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
 openRangeLow = plot(timerange(timeframe.period, rth_fill_ses) and showAsianRange ? lowRes : na, color=lineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
-bgcolor(timerange(timeframe.period, rth_ses) and showAsianRange ? asianBackgroundColor : na, title="Asian Session Background Color")
+bgcolor(timerange(timeframe.period, rth_ses) and showAsianRange ? color.new(color.silver, 100) : na, title="Asian Session Background Color")
 
 
-fill(openRangeHigh, openRangeLow, color=showAsianRange ? asianFillColor : na, title="Fill Asian Range Color")
+fill(openRangeHigh, openRangeLow, color=showAsianRange ? color.new(color.blue, 90) : na, title="Fill Asian Range Color")
 
 if (not inSession and inSession[1] and showAsianRange)
     sessionRange := ((rth_high[1]-rth_low[1])/(syminfo.mintick))/10
@@ -1427,19 +1431,19 @@ if (show_london_session and isValidResolution())
     
     //if inSession
     // Build the Asian Box
-    ltrl = line.new(LondonFromDate, london_rth_low, LondonToDate, london_rth_low, xloc=xloc.bar_time, color=lline_color, style=lbox_line_style, width = lboxLineWidth)
+    ltrl = line.new(LondonFromDate, london_rth_low, LondonToDate, london_rth_low, xloc=xloc.bar_time, color=london_boundary_color, style=lbox_line_style, width = lboxLineWidth)
     line.delete(ltrl[1])
     
-    ltrh = line.new(LondonFromDate, london_rth_high, LondonToDate, london_rth_high, xloc=xloc.bar_time, color=lline_color, style=lbox_line_style, width = lboxLineWidth)
+    ltrh = line.new(LondonFromDate, london_rth_high, LondonToDate, london_rth_high, xloc=xloc.bar_time, color=london_boundary_color, style=lbox_line_style, width = lboxLineWidth)
     line.delete(ltrh[1])
     
     ltrm = line.new(LondonFromDate, london_rth_mid, LondonToDate, london_rth_mid, xloc=xloc.bar_time, color=lmidline_color, style=lmiddle_line_style, width = lsessionLineWidth)
     line.delete(ltrm[1])
     
-    londonStartBox = line.new(LondonFromDate, london_rth_high, LondonFromDate, london_rth_low, extend=extend.none, xloc=xloc.bar_time, color=lline_color, style=lbox_line_style, width=lboxLineWidth)
+    londonStartBox = line.new(LondonFromDate, london_rth_high, LondonFromDate, london_rth_low, extend=extend.none, xloc=xloc.bar_time, color=london_boundary_color, style=lbox_line_style, width=lboxLineWidth)
     line.delete(londonStartBox[1])
     
-    londonEndBox = line.new(LondonToDate, london_rth_high, LondonToDate, london_rth_low, extend=extend.none, xloc=xloc.bar_time, color=lline_color, style=lbox_line_style, width=lboxLineWidth)
+    londonEndBox = line.new(LondonToDate, london_rth_high, LondonToDate, london_rth_low, extend=extend.none, xloc=xloc.bar_time, color=london_boundary_color, style=lbox_line_style, width=lboxLineWidth)
     line.delete(londonEndBox[1])
     // End Section
     
@@ -1521,19 +1525,19 @@ if (show_ny_session and isValidResolution())
     
     //if inSession
     // Build the Asian Box
-    ntrl = line.new(NyFromDate, ny_rth_low, NyToDate, ny_rth_low, xloc=xloc.bar_time, color=nline_color, style=nbox_line_style, width = nboxLineWidth)
+    ntrl = line.new(NyFromDate, ny_rth_low, NyToDate, ny_rth_low, xloc=xloc.bar_time, color=ny_boundary_color, style=nbox_line_style, width = nboxLineWidth)
     line.delete(ntrl[1])
     
-    ntrh = line.new(NyFromDate, ny_rth_high, NyToDate, ny_rth_high, xloc=xloc.bar_time, color=nline_color, style=nbox_line_style, width = nboxLineWidth)
+    ntrh = line.new(NyFromDate, ny_rth_high, NyToDate, ny_rth_high, xloc=xloc.bar_time, color=ny_boundary_color, style=nbox_line_style, width = nboxLineWidth)
     line.delete(ntrh[1])
     
     ntrm = line.new(NyFromDate, ny_rth_mid, NyToDate, ny_rth_mid, xloc=xloc.bar_time, color=nmidline_color, style=nmiddle_line_style, width = nsessionLineWidth)
     line.delete(ntrm[1])
     
-    nyStartBox = line.new(NyFromDate, ny_rth_high, NyFromDate, ny_rth_low, extend=extend.none, xloc=xloc.bar_time, color=nline_color, style=nbox_line_style, width=nboxLineWidth)
+    nyStartBox = line.new(NyFromDate, ny_rth_high, NyFromDate, ny_rth_low, extend=extend.none, xloc=xloc.bar_time, color=ny_boundary_color, style=nbox_line_style, width=nboxLineWidth)
     line.delete(nyStartBox[1])
     
-    nyEndBox = line.new(NyToDate, ny_rth_high, NyToDate, ny_rth_low, extend=extend.none, xloc=xloc.bar_time, color=nline_color, style=nbox_line_style, width=nboxLineWidth)
+    nyEndBox = line.new(NyToDate, ny_rth_high, NyToDate, ny_rth_low, extend=extend.none, xloc=xloc.bar_time, color=ny_boundary_color, style=nbox_line_style, width=nboxLineWidth)
     line.delete(nyEndBox[1])
     // End Section
     
@@ -1931,63 +1935,63 @@ isDark     = r < 80 and g < 80 and b < 80
 //User Defined Types
 //-----------------------------------------------------------------------------{
 type ZZ 
-	int   [] d
-	int   [] x 
-	float [] y 
-	bool  [] b
+    int   [] d
+    int   [] x 
+    float [] y 
+    bool  [] b
 
 type ln_d
-	line  l
-	int   d
+    line  l
+    int   d
 
 type _2ln_lb
-	line  l1
-	line  l2
-	label lb
+    line  l1
+    line  l2
+    label lb
 
 type bx_ln
-	box   b 
-	line  l 
+    box   b 
+    line  l 
 
 type bx_ln_lb
-	box   bx
-	line  ln
-	label lb 
+    box   bx
+    line  ln
+    label lb 
 
 type mss 
-	int     dir
-	line [] l_mssBl
-	line [] l_mssBr
-	line [] l_bosBl
-	line [] l_bosBr
-	label[] lbMssBl
-	label[] lbMssBr
-	label[] lbBosBl
-	label[] lbBosBr
+    int     dir
+    line [] l_mssBl
+    line [] l_mssBr
+    line [] l_bosBl
+    line [] l_bosBr
+    label[] lbMssBl
+    label[] lbMssBr
+    label[] lbBosBl
+    label[] lbBosBr
 
 type liq
-	box   bx
-	bool  broken
-	bool  brokenTop
-	bool  brokenBtm
-	line  ln
+    box   bx
+    bool  broken
+    bool  brokenTop
+    bool  brokenBtm
+    line  ln
 
 type ob
-	float   top       = na
-	float   btm       = na
-	int     loc       = bar_index
-	bool    breaker   = false
-	int     break_loc = na
+    float   top       = na
+    float   btm       = na
+    int     loc       = bar_index
+    bool    breaker   = false
+    int     break_loc = na
 
 type swing
-	float y = na
-	int   x = na
-	bool  crossed = false
+    float y = na
+    int   x = na
+    bool  crossed = false
 
 type FVG 
-	box box 
-	bool active
-	int  pos 
+    box box 
+    bool active
+    int  pos 
 
 var mss MSS = mss.new(
  0
@@ -3097,22 +3101,22 @@ discountZoneColorInput          = input.color(  GREEN,      'Discount Zone',    
 // @field bullishFairValueGap       fair value gap custom alert
 // @field bearishFairValueGap       fair value gap custom alert
 type alerts
-	bool internalBullishBOS         = false
-	bool internalBearishBOS         = false
-	bool internalBullishCHoCH       = false
-	bool internalBearishCHoCH       = false
-	bool swingBullishBOS            = false
-	bool swingBearishBOS            = false
-	bool swingBullishCHoCH          = false
-	bool swingBearishCHoCH          = false
-	bool internalBullishOrderBlock  = false
-	bool internalBearishOrderBlock  = false
-	bool swingBullishOrderBlock     = false
-	bool swingBearishOrderBlock     = false
-	bool equalHighs                 = false
-	bool equalLows                  = false
-	bool bullishFairValueGap        = false
-	bool bearishFairValueGap        = false
+    bool internalBullishBOS         = false
+    bool internalBearishBOS         = false
+    bool internalBullishCHoCH       = false
+    bool internalBearishCHoCH       = false
+    bool swingBullishBOS            = false
+    bool swingBearishBOS            = false
+    bool swingBullishCHoCH          = false
+    bool swingBearishCHoCH          = false
+    bool internalBullishOrderBlock  = false
+    bool internalBearishOrderBlock  = false
+    bool swingBullishOrderBlock     = false
+    bool swingBearishOrderBlock     = false
+    bool equalHighs                 = false
+    bool equalLows                  = false
+    bool bullishFairValueGap        = false
+    bool bearishFairValueGap        = false
 
 // @type                            UDT representing last swing extremes (top & bottom)
 // @field top                       last top swing price
@@ -3122,12 +3126,12 @@ type alerts
 // @field lastTopTime               last top swing time
 // @field lastBottomTime            last bottom swing time
 type trailingExtremes
-	float top
-	float bottom
-	int barTime
-	int barIndex
-	int lastTopTime
-	int lastBottomTime
+    float top
+    float bottom
+    int barTime
+    int barIndex
+    int lastTopTime
+    int lastBottomTime
 
 // @type                            UDT representing Fair Value Gaps
 // @field top                       top price
@@ -3136,23 +3140,23 @@ type trailingExtremes
 // @field topBox                    top box
 // @field bottomBox                 bottom box
 type fairValueGap
-	float top
-	float bottom
-	int bias
-	box topBox
-	box bottomBox
+    float top
+    float bottom
+    int bias
+    box topBox
+    box bottomBox
 
 // @type                            UDT representing trend bias
 // @field bias                      BULLISH or BEARISH
 type trend
-	int bias    
+    int bias    
 
 // @type                            UDT representing Equal Highs Lows display
 // @field l_ine                     displayed line
 // @field l_abel                    displayed label
 type equalDisplay
-	line l_ine      = na
-	label l_abel    = na
+    line l_ine      = na
+    label l_abel    = na
 
 // @type                            UDT representing a pivot point (swing point) 
 // @field currentLevel              current price level
@@ -3161,11 +3165,11 @@ type equalDisplay
 // @field barTime                   bar time
 // @field barIndex                  bar index    
 type pivot
-	float currentLevel
-	float lastLevel
-	bool crossed
-	int barTime     = time
-	int barIndex    = bar_index
+    float currentLevel
+    float lastLevel
+    bool crossed
+    int barTime     = time
+    int barIndex    = bar_index
 
 // @type                            UDT representing an order block
 // @field barHigh                   bar high
@@ -3173,10 +3177,10 @@ type pivot
 // @field barTime                   bar time
 // @field bias                      BULLISH or BEARISH
 type orderBlock
-	float barHigh
-	float barLow
-	int barTime    
-	int bias
+    float barHigh
+    float barLow
+    int barTime    
+    int bias
 
 // @variable                        current swing pivot high    
 var pivot swingHigh                 = pivot.new(na,na,false)
@@ -3790,14 +3794,7 @@ alertcondition(currentAlerts.bearishFairValueGap,       'Bearish FVG',          
 // VWAP MTF
 // =================================================================================================
 
-string group_vwap = "VWAP Settings  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-TimeFrame = input.string('W', 'VWAP Timeframe', group = group_vwap)
-showBcol = input.bool(false, title="Show barcolors", group = group_vwap)
-showPrevVWAP = input.bool(false, title="Show previous VWAP close", group = group_vwap)
-vwapBullColorInput = input.color(color.green, 'Bullish VWAP color', group = group_vwap)
-vwapBearColorInput = input.color(color.red, 'Bearish VWAP color', group = group_vwap)
-vwapTransparencyInput = input.int(0, 'VWAP Transparency', minval = 0, maxval = 100, group = group_vwap)
-
+TimeFrame = input('W')
 start = request.security(syminfo.tickerid, TimeFrame, time)
 //------------------------------------------------
 newSession = ta.change(start) != 0
@@ -3811,13 +3808,15 @@ volumesum := newSession ? volume : nz(volumesum[1]) + volume
 v2sum := newSession ? volume * hl2 * hl2 : nz(v2sum[1]) + volume * hl2 * hl2
 myvwap = volumesum != 0 ? vwapsum / volumesum : na
 dev = volumesum != 0 ? math.sqrt(math.max(v2sum / volumesum - nz(myvwap) * nz(myvwap), 0)) : na
-color bullVWAPColor = color.new(vwapBullColorInput, vwapTransparencyInput)
-color bearVWAPColor = color.new(vwapBearColorInput, vwapTransparencyInput)
-Coloring = close > myvwap ? bullVWAPColor : bearVWAPColor
+vwapAboveColorInput = input.color(color.green, title='VWAP Above Color')
+vwapBelowColorInput = input.color(color.red, title='VWAP Below Color')
+vwapTransparencyInput = input.int(0, title='VWAP Color Transparency', minval=0, maxval=100)
+Coloring = close > myvwap ? color.new(vwapAboveColorInput, vwapTransparencyInput) : color.new(vwapBelowColorInput, vwapTransparencyInput)
 av = myvwap
+showBcol = input.bool(false, title="Show barcolors")
+showPrevVWAP = input.bool(false, title="Show previous VWAP close")
 prevwap := newSession ? myvwap[1] : prevwap[1]
-prevColor = close > prevwap ? bullVWAPColor : bearVWAPColor
-plot(showPrevVWAP ? prevwap : na, style = plot.style_circles, color = prevColor)
-A = plot(av, style = plot.style_circles, color = Coloring)
+prevColoring = not na(prevwap) and close > prevwap ? color.new(vwapAboveColorInput, vwapTransparencyInput) : color.new(vwapBelowColorInput, vwapTransparencyInput)
+plot(showPrevVWAP ? prevwap : na, style=plot.style_circles, color=prevColoring)
+A = plot(av, style=plot.style_circles, color=Coloring)
 barcolor(showBcol ? Coloring : na)
-
