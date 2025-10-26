@@ -594,13 +594,13 @@ method Monitor(CandleSet candleSet) =>
             _830 := timestamp("America/New_York", year(time), month(time), dayofmonth(time), 0, 0) + 30600000
         if candleSet.settings.htf == '1D'
             if settings.custom_daily == 'Midnight'
-                isNewHTFCandle := dayofweek(time, 'America/New_York') != dayofweek(time - (time - time[1]), 'America/New_York')
+                isNewHTFCandle := dayofweek(time, "America/New_York") != dayofweek(time - (time - time[1]), "America/New_York")
             if settings.custom_daily == '8:30'    
                 // Get 8:30 AM New York time for today 
-                isNewHTFCandle := not na(time(timeframe.period, "0830-0831:123456", 'America/New_York')) and na(time(timeframe.period, "0830-0831:123456", 'America/New_York')[1])
+                isNewHTFCandle := not na(time(timeframe.period, "0830-0831:123456", "America/New_York")) and na(time(timeframe.period, "0830-0831:123456", "America/New_York")[1])
             if settings.custom_daily == '9:30'    
                 // Get 9:30 AM New York time for today 
-                isNewHTFCandle := not na(time(timeframe.period, "0930-0931:123456", 'America/New_York')) and na(time(timeframe.period, "0930-0931:123456", 'America/New_York')[1])
+                isNewHTFCandle := not na(time(timeframe.period, "0930-0931:123456", "America/New_York")) and na(time(timeframe.period, "0930-0931:123456", "America/New_York")[1])
     if isNewHTFCandle
         candleSet.RevealHistoricalActive()
         Candle candle = Candle.new()
@@ -617,11 +617,11 @@ method Monitor(CandleSet candleSet) =>
             candleSet.settings.htf == '1D' =>
                 helper.DayofWeek(dayofweek(time_tradingday, "America/New_York"))
             str.tonumber(candleSet.settings.htf) < 60 =>
-                str.format_time(candle.o_time, 'm', 'America/New_York')
+                str.format_time(candle.o_time, "m", "America/New_York")
             str.tonumber(candleSet.settings.htf) >= 60 =>
-                str.format_time(candle.o_time, 'H', 'America/New_York')
+                str.format_time(candle.o_time, "H", "America/New_York")
             candleSet.settings.htf == '1M' =>
-                str.format_time(candle.o_time, 'M', 'America/New_York')
+                str.format_time(candle.o_time, "M", "America/New_York")
             =>
                 ''
         log.info('dow: {1} |{0}|', candle.dow, candleSet.settings.htf)
@@ -2334,7 +2334,7 @@ if MSS.l_bosBr.size() > 200
     MSS.lbBosBr.pop().delete()
 
 //Killzones 
-ny          = not na(time(timeframe.period, input.session('0700-0900', '', inline = 'ny', group = 'Killzones'), 'America/New_York')) and showNy
+ny          = not na(time(timeframe.period, input.session('0700-0900', '', inline = 'ny', group = 'Killzones'), "America/New_York")) and showNy
 ldn_open    = not na(time(timeframe.period, input.session('0700-1000', '', inline = 'lo', group = 'Killzones'), 'Europe/London'   )) and showLdno // 0200-0500 UTC-5
 ldn_close   = not na(time(timeframe.period, input.session('1500-1700', '', inline = 'lc', group = 'Killzones'), 'Europe/London'   )) and showLdnc // 1000-1200 UTC-5
 asian       = not na(time(timeframe.period, input.session('1000-1400', '', inline = 'as', group = 'Killzones'), 'Asia/Tokyo'      )) and showAsia // 2000-0000 UTC-5
