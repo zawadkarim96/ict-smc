@@ -8,6 +8,386 @@ ema22_transparency = input.int(0, 'Transparency', minval=0, maxval=100, group=gr
 ema22_value = ta.ema(close, 22)
 plot(show_ema22 ? ema22_value : na, 'EMA 22', color.new(ema22_color, ema22_transparency))
 
+// =================================================================================================
+// UT Bot + Linear Regression Inputs
+// =================================================================================================
+string groupUtCombo = "UT Bot + Linear Regression ━━━━━━━━━━━━━━━━━━━━━━"
+bool enableUtComboInput = input.bool(false, 'Enable UT Bot + Linear Regression', group=groupUtCombo)
+
+string groupUtBot = "UT Bot"
+float utBuySensitivityInput = input.float(2.0, 'Buy Sensitivity (Multiplier)', minval=0.0, group=groupUtBot)
+int utBuyAtrPeriodInput = input.int(1, 'Buy ATR Period (0 = disable)', minval=0, group=groupUtBot)
+float utSellSensitivityInput = input.float(2.0, 'Sell Sensitivity (Multiplier)', minval=0.0, group=groupUtBot)
+int utSellAtrPeriodInput = input.int(1, 'Sell ATR Period (0 = disable)', minval=0, group=groupUtBot)
+bool utShowTrailBuyInput = input.bool(false, 'Show Buy Trailing Line', group=groupUtBot)
+bool utShowTrailSellInput = input.bool(false, 'Show Sell Trailing Line', group=groupUtBot)
+
+string groupUtLinReg = "LinReg"
+int utSignalLengthInput = input.int(7, 'Signal Smoothing', minval=1, maxval=200, group=groupUtLinReg)
+bool utSignalSmaInput = input.bool(true, 'Simple MA (Signal Line)', group=groupUtLinReg)
+bool utUseLinRegInput = input.bool(true, 'Use LinReg', group=groupUtLinReg)
+int utLinRegLengthInput = input.int(11, 'Linear Regression Length', minval=1, maxval=200, group=groupUtLinReg)
+
+string groupUtZones = "Longevity Zones"
+bool utShowZonesInput = input.bool(true, 'Show Longevity Zones', group=groupUtZones)
+int utLongevityLengthInput = input.int(5, 'Longevity Length', group=groupUtZones)
+color utLongevityUpperColorInput = input.color(color.new(color.red, 75), 'Upper Zone Color', group=groupUtZones)
+color utLongevityLowerColorInput = input.color(color.new(color.green, 75), 'Lower Zone Color', group=groupUtZones)
+string utLongevityLabelPositionInput = input.string('LastBar', 'Labels Position', options=['Root', 'LastBar'], group=groupUtZones)
+bool utLongevityLabelsAtRoot = utLongevityLabelPositionInput == 'LastBar'
+int utLongevityLabelOffsetInput = input.int(10, 'Label Offset (bars)', group=groupUtZones, minval=10, maxval=500)
+
+string groupUtAddOns = 'Add-ons (Panel & S/R)'
+bool utSrLinesInput = input.bool(false, 'Support & Resistance Lines', group=groupUtAddOns)
+bool utDashOnInput = input.bool(true, 'Dashboard Panel', group=groupUtAddOns)
+int utDashShiftBarsInput = input.int(60, 'Panel Right Shift (bars)', group=groupUtAddOns, minval=40, maxval=200)
+color utDashColorInput = input.color(color.new(#8fd46d, 80), 'Panel Background', inline='dash', group=groupUtAddOns)
+color utDashTextColorInput = input.color(color.white, 'Text Color', inline='dash', group=groupUtAddOns)
+int utVolMaLenInput = input.int(20, 'Volume MA Length', group=groupUtAddOns, minval=1)
+int utPanelAnchorBarsInput = input.int(300, 'Panel anchor bars (top-right)', group=groupUtAddOns, minval=100, maxval=9000)
+float utPanelPadPctInput = input.float(0.2, 'Panel vertical padding', group=groupUtAddOns, minval=0.0, maxval=0.40, step=0.005)
+string utPanelPlacementInput = input.string('Top-Right', 'Dashboard Placement', options=['Top-Right', 'Top-Left', 'Bottom-Right', 'Bottom-Left', 'Bottom-Center'], group=groupUtAddOns)
+
+string groupUtSupport = 'Support & Resistance'
+bool utShowSrInput = input.bool(true, 'Show Support & Resistance Lines', group=groupUtSupport)
+
+string groupUtOsc = 'Oscillator Settings'
+int utMacdFastLengthInput = input.int(12, 'MACD Fast Length', group=groupUtOsc)
+int utMacdSlowLengthInput = input.int(26, 'MACD Slow Length', group=groupUtOsc)
+int utMacdSignalLengthInput = input.int(9, 'MACD Signal Length', group=groupUtOsc)
+int utStochLengthInput = input.int(14, 'Stochastic Length', group=groupUtOsc)
+int utStochKInput = input.int(3, 'Stoch K Smoothing', group=groupUtOsc)
+int utStochDInput = input.int(3, 'Stoch D Smoothing', group=groupUtOsc)
+
+// =================================================================================================
+// No Trade Zone Inputs
+// =================================================================================================
+string groupNtz = "No Trade Zone ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+bool enableNtzInput = input.bool(true, 'Enable No Trade Zone', group=groupNtz)
+bool showNtzBackgroundInput = input.bool(true, 'Show Zone Background', group=groupNtz)
+bool showNtzLabelInput = input.bool(true, 'Show Zone Label', group=groupNtz)
+bool enableNtzAlertInput = input.bool(true, 'Enable NTZ Alert', group=groupNtz)
+
+var label ntzLabel = na
+var int ntzPrevMssDir = 0
+
+//---------------------------------------------------------------------------------------------------------------------
+// UT Bot + Linear Regression Calculations
+//---------------------------------------------------------------------------------------------------------------------
+bool utModuleActive = enableUtComboInput
+
+bool utBuyEnabled = utModuleActive and utBuyAtrPeriodInput > 0 and utBuySensitivityInput > 0
+float utSrcBuy = close
+float utEmaBuy = ta.ema(utSrcBuy, 1)
+float utAtrBuy = utBuyEnabled ? ta.atr(utBuyAtrPeriodInput) : na
+float utBuyStopDistance = utBuyEnabled ? utBuySensitivityInput * utAtrBuy : na
+var float utTrailBuy = na
+if utModuleActive and utBuyEnabled
+    if na(utTrailBuy[1])
+        utTrailBuy := utSrcBuy - utBuyStopDistance
+    else
+        if utSrcBuy > utTrailBuy[1] and utSrcBuy[1] > utTrailBuy[1]
+            utTrailBuy := math.max(utTrailBuy[1], utSrcBuy - utBuyStopDistance)
+        else if utSrcBuy < utTrailBuy[1] and utSrcBuy[1] < utTrailBuy[1]
+            utTrailBuy := math.min(utTrailBuy[1], utSrcBuy + utBuyStopDistance)
+        else
+            utTrailBuy := utSrcBuy > utTrailBuy[1] ? utSrcBuy - utBuyStopDistance : utSrcBuy + utBuyStopDistance
+else
+    utTrailBuy := na
+
+bool utSellEnabled = utModuleActive and utSellAtrPeriodInput > 0 and utSellSensitivityInput > 0
+float utSrcSell = close
+float utEmaSell = ta.ema(utSrcSell, 1)
+float utAtrSell = utSellEnabled ? ta.atr(utSellAtrPeriodInput) : na
+float utSellStopDistance = utSellEnabled ? utSellSensitivityInput * utAtrSell : na
+var float utTrailSell = na
+if utModuleActive and utSellEnabled
+    if na(utTrailSell[1])
+        utTrailSell := utSrcSell + utSellStopDistance
+    else
+        if utSrcSell > utTrailSell[1] and utSrcSell[1] > utTrailSell[1]
+            utTrailSell := math.max(utTrailSell[1], utSrcSell - utSellStopDistance)
+        else if utSrcSell < utTrailSell[1] and utSrcSell[1] < utTrailSell[1]
+            utTrailSell := math.min(utTrailSell[1], utSrcSell + utSellStopDistance)
+        else
+            utTrailSell := utSrcSell > utTrailSell[1] ? utSrcSell - utSellStopDistance : utSrcSell + utSellStopDistance
+else
+    utTrailSell := na
+
+bool utAboveBuyCross = utModuleActive and utBuyEnabled and ta.crossover(utEmaBuy, utTrailBuy)
+bool utBelowSellCross = utModuleActive and utSellEnabled and ta.crossover(utTrailSell, utEmaSell)
+
+bool utBuySignalRaw = utModuleActive and utBuyEnabled and (utSrcBuy > utTrailBuy) and utAboveBuyCross
+bool utSellSignalRaw = utModuleActive and utSellEnabled and (utSrcSell < utTrailSell) and utBelowSellCross
+
+var int utPosState = 0
+bool utBuySignalConfirmed = false
+bool utSellSignalConfirmed = false
+if not utModuleActive
+    utPosState := 0
+else
+    bool utBuyCandidate = utBuySignalRaw and barstate.isconfirmed and utPosState <= 0
+    bool utSellCandidate = utSellSignalRaw and barstate.isconfirmed and utPosState >= 0
+    if utBuyCandidate
+        utPosState := 1
+    else if utSellCandidate
+        utPosState := -1
+    utBuySignalConfirmed := utBuyCandidate
+    utSellSignalConfirmed := utSellCandidate
+
+bool utBuySignalVisible = utModuleActive and utBuySignalRaw
+bool utSellSignalVisible = utModuleActive and utSellSignalRaw
+color utBarColorSeries = utBuySignalVisible ? color.new(color.green, 75) : utSellSignalVisible ? color.new(color.red, 75) : na
+
+bool utLinRegActive = utModuleActive and utUseLinRegInput
+float utLinRegOpenSeries = utLinRegActive ? ta.linreg(open, utLinRegLengthInput, 0) : open
+float utLinRegHighSeries = utLinRegActive ? ta.linreg(high, utLinRegLengthInput, 0) : high
+float utLinRegLowSeries = utLinRegActive ? ta.linreg(low, utLinRegLengthInput, 0) : low
+float utLinRegCloseSeries = utLinRegActive ? ta.linreg(close, utLinRegLengthInput, 0) : close
+float utLinRegClosePrevSeries = utLinRegActive ? ta.linreg(close, utLinRegLengthInput, 1) : nz(close[1], close)
+
+float utSignalLineValue = utModuleActive ? (utSignalSmaInput ? ta.sma(utLinRegCloseSeries, utSignalLengthInput) : ta.ema(utLinRegCloseSeries, utSignalLengthInput)) : na
+
+bool utInLong = utModuleActive and utPosState == 1
+bool utInShort = utModuleActive and utPosState == -1
+bool utIsFlat = utModuleActive and utPosState == 0
+bool utDirUp = utLinRegCloseSeries >= utLinRegOpenSeries
+
+float utLinRegSlope = utModuleActive ? utLinRegCloseSeries - utLinRegClosePrevSeries : 0.0
+int utLinRegSlopeDir = utModuleActive ? (utLinRegSlope > 0 ? 1 : utLinRegSlope < 0 ? -1 : 0) : 0
+int utSignalDir = utModuleActive ? (utBuySignalConfirmed ? 1 : utSellSignalConfirmed ? -1 : 0) : 0
+bool utSignalMissingOrConflict = not utModuleActive or utSignalDir == 0 or (utLinRegSlopeDir != 0 and utSignalDir != utLinRegSlopeDir)
+
+// =================================================================================================
+// Longevity Zones
+// =================================================================================================
+type utLevel
+    float top
+    float bot
+    int start
+type utDrawing
+    line top
+    line bot
+    linefill fill
+    label lbl
+
+var utUpperLevels = array.new<utLevel>()
+var utLowerLevels = array.new<utLevel>()
+var utUpperDrawings = array.new<utDrawing>()
+var utLowerDrawings = array.new<utDrawing>()
+
+float utHighestSeries = ta.highest(utLongevityLengthInput)
+float utLowestSeries = ta.lowest(utLongevityLengthInput)
+bool utHighPivot = high[1] == utHighestSeries[1] and high < utHighestSeries
+bool utLowPivot = low[1] == utLowestSeries[1] and low > utLowestSeries
+float utHalfAtr = ta.atr(20) * 0.5
+
+bool utZonesActive = utModuleActive and utShowZonesInput
+if utZonesActive
+    if utHighPivot
+        array.push(utUpperLevels, utLevel.new(utHighestSeries, utHighestSeries - utHalfAtr, bar_index - 1))
+    if utLowPivot
+        array.push(utLowerLevels, utLevel.new(utLowestSeries + utHalfAtr, utLowestSeries, bar_index - 1))
+    if array.size(utUpperLevels) > 10
+        array.shift(utUpperLevels)
+    if array.size(utLowerLevels) > 10
+        array.shift(utLowerLevels)
+    for i = array.size(utUpperLevels) - 1 to 0
+        if array.size(utUpperLevels) == 0
+            break
+        zUp = array.get(utUpperLevels, i)
+        if high > zUp.top and bar_index > zUp.start
+            array.remove(utUpperLevels, i)
+    for i = array.size(utLowerLevels) - 1 to 0
+        if array.size(utLowerLevels) == 0
+            break
+        zLo = array.get(utLowerLevels, i)
+        if low < zLo.bot and bar_index > zLo.start
+            array.remove(utLowerLevels, i)
+
+if barstate.islast and utZonesActive
+    if array.size(utUpperDrawings) > 0
+        for i = 0 to array.size(utUpperDrawings) - 1
+            d = array.get(utUpperDrawings, i)
+            line.delete(d.top)
+            line.delete(d.bot)
+            if not na(d.fill)
+                linefill.delete(d.fill)
+            label.delete(d.lbl)
+        array.clear(utUpperDrawings)
+    if array.size(utLowerDrawings) > 0
+        for i = 0 to array.size(utLowerDrawings) - 1
+            d = array.get(utLowerDrawings, i)
+            line.delete(d.top)
+            line.delete(d.bot)
+            if not na(d.fill)
+                linefill.delete(d.fill)
+            label.delete(d.lbl)
+        array.clear(utLowerDrawings)
+    if array.size(utUpperLevels) > 0
+        for i = 0 to array.size(utUpperLevels) - 1
+            z = array.get(utUpperLevels, i)
+            l1 = line.new(z.start, z.top, bar_index, z.top, color=utLongevityUpperColorInput, width=8)
+            l2 = line.new(z.start, z.bot, bar_index, z.bot, color=utLongevityUpperColorInput, width=8)
+            f = linefill.new(l1, l2, color=utLongevityUpperColorInput)
+            dur = bar_index - z.start
+            daysTot = int(dur * (timeframe.in_seconds(timeframe.period) / 86400))
+            txt = daysTot >= 365 ? str.tostring(int(daysTot / 365)) + ' Y (' + str.tostring(dur) + ' bars)' : daysTot >= 30 ? str.tostring(int(daysTot / 30)) + ' M (' + str.tostring(dur) + ' bars)' : str.tostring(daysTot) + ' D (' + str.tostring(dur) + ' bars)'
+            lx = utLongevityLabelsAtRoot ? z.start : bar_index + utLongevityLabelOffsetInput
+            ly = (z.top + z.bot) / 2
+            lbl = label.new(lx, ly, txt, style=label.style_label_center, textcolor=color.white, color=color.new(color.black, 0))
+            array.push(utUpperDrawings, utDrawing.new(l1, l2, f, lbl))
+    if array.size(utLowerLevels) > 0
+        for i = 0 to array.size(utLowerLevels) - 1
+            z = array.get(utLowerLevels, i)
+            l1 = line.new(z.start, z.top, bar_index, z.top, color=utLongevityLowerColorInput, width=8)
+            l2 = line.new(z.start, z.bot, bar_index, z.bot, color=utLongevityLowerColorInput, width=8)
+            f = linefill.new(l1, l2, color=utLongevityLowerColorInput)
+            dur = bar_index - z.start
+            daysTot = int(dur * (timeframe.in_seconds(timeframe.period) / 86400))
+            txt = daysTot >= 365 ? str.tostring(int(daysTot / 365)) + ' Y (' + str.tostring(dur) + ' bars)' : daysTot >= 30 ? str.tostring(int(daysTot / 30)) + ' M (' + str.tostring(dur) + ' bars)' : str.tostring(daysTot) + ' D (' + str.tostring(dur) + ' bars)'
+            lx = utLongevityLabelsAtRoot ? z.start : bar_index + utLongevityLabelOffsetInput
+            ly = (z.top + z.bot) / 2
+            lbl = label.new(lx, ly, txt, style=label.style_label_center, textcolor=color.white, color=color.new(color.black, 0))
+            array.push(utLowerDrawings, utDrawing.new(l1, l2, f, lbl))
+else if barstate.islast
+    if array.size(utUpperDrawings) > 0
+        for i = 0 to array.size(utUpperDrawings) - 1
+            d = array.get(utUpperDrawings, i)
+            line.delete(d.top)
+            line.delete(d.bot)
+            if not na(d.fill)
+                linefill.delete(d.fill)
+            label.delete(d.lbl)
+        array.clear(utUpperDrawings)
+    if array.size(utLowerDrawings) > 0
+        for i = 0 to array.size(utLowerDrawings) - 1
+            d = array.get(utLowerDrawings, i)
+            line.delete(d.top)
+            line.delete(d.bot)
+            if not na(d.fill)
+                linefill.delete(d.fill)
+            label.delete(d.lbl)
+        array.clear(utLowerDrawings)
+
+// =================================================================================================
+// Support & Resistance Lines
+// =================================================================================================
+float utH1000 = ta.highest(high, 1000)
+float utH750 = ta.highest(high, 750)
+float utH500 = ta.highest(high, 500)
+float utH250 = ta.highest(high, 250)
+float utH100 = ta.highest(high, 100)
+float utH50 = ta.highest(high, 50)
+float utH10 = ta.highest(high, 10)
+float utL1000 = ta.lowest(low, 1000)
+float utL750 = ta.lowest(low, 750)
+float utL500 = ta.lowest(low, 500)
+float utL250 = ta.lowest(low, 250)
+float utL100 = ta.lowest(low, 100)
+float utL50 = ta.lowest(low, 50)
+float utL10 = ta.lowest(low, 10)
+
+// Plots are deferred until core support/resistance levels are available so we can avoid duplicating drawings.
+
+// =================================================================================================
+// Dashboard & Oscillator Calculations
+// =================================================================================================
+emaTrendTf(tf) =>
+    float emaFast = request.security(syminfo.tickerid, tf, ta.ema(close, 9), barmerge.gaps_off, barmerge.lookahead_off)
+    float emaSlow = request.security(syminfo.tickerid, tf, ta.ema(close, 21), barmerge.gaps_off, barmerge.lookahead_off)
+    emaFast > emaSlow ? '🟢 BULL' : emaFast < emaSlow ? '🔴 BEAR' : '— FLAT'
+
+trendStrHtF(tf) => emaTrendTf(tf)
+
+utCalcVol() =>
+    float _atr = ta.atr(14)
+    float _std2 = 2.0 * ta.stdev(_atr, 20)
+    float _sma = ta.sma(_atr, 20)
+    float top = _sma + _std2
+    float bot = _sma - _std2
+    nz(30.0 + 40.0 * ((_atr - bot) / math.max(1e-10, (top - bot))), 50)
+
+float utVolNow = volume
+float utVolMa = ta.sma(volume, utVolMaLenInput)
+string utVolBias = utVolNow > utVolMa ? '🟢 Above Avg' : utVolNow < utVolMa ? '🔴 Below Avg' : '— Avg'
+float utVwapValue = ta.vwap(close)
+string utVwapPosition = close > utVwapValue ? '🟢 Price Above' : '🔴 Price Below'
+[float utMacdLine, float utMacdSignal, float utMacdHist] = ta.macd(close, utMacdFastLengthInput, utMacdSlowLengthInput, utMacdSignalLengthInput)
+string utMacdBias = utMacdLine > utMacdSignal ? '🟢 Bullish' : '🔴 Bearish'
+float utK = ta.sma(ta.stoch(close, high, low, utStochLengthInput), utStochKInput)
+float utD = ta.sma(utK, utStochDInput)
+string utStochDirection = utK > utD ? '🟢 Up' : '🔴 Down'
+string utStochState = utStochDirection + ' but ' + (utK > 80 ? 'Overbought' : utK < 20 ? 'Oversold' : 'Neutral')
+float utAtrNow = ta.atr(14)
+float utAtrSma20 = ta.sma(utAtrNow, 20)
+string utAtrState = utAtrNow > utAtrSma20 * 1.20 ? '🟢 High' : utAtrNow < utAtrSma20 * 0.80 ? '🔴 Low' : '— Mid'
+float utTodayOpen = request.security(syminfo.tickerid, 'D', open)
+float utTodayClose = request.security(syminfo.tickerid, 'D', close)
+float utTodayHigh = request.security(syminfo.tickerid, 'D', high)
+float utTodayLow = request.security(syminfo.tickerid, 'D', low)
+string utTodayDirection = utTodayClose > utTodayOpen ? '🟢↑' : utTodayClose < utTodayOpen ? '🔴↓' : '➖'
+float utTodayRangePerc = (utTodayHigh - utTodayLow) / math.max(utTodayLow, syminfo.mintick) * 100
+float utPrevHigh = request.security(syminfo.tickerid, 'D', high[1])
+float utPrevLow = request.security(syminfo.tickerid, 'D', low[1])
+float utPrevOpen = request.security(syminfo.tickerid, 'D', open[1])
+float utPrevClose = request.security(syminfo.tickerid, 'D', close[1])
+float utPrevRangePerc = (utPrevHigh - utPrevLow) / math.max(utPrevLow, syminfo.mintick) * 100
+string utPrevDayDirection = utPrevClose > utPrevOpen ? '🟢↑' : utPrevClose < utPrevOpen ? '🔴↓' : '➖'
+string utAtrTrailText = utPosState == 1 and utBuyEnabled ? str.tostring(utTrailBuy, '#.#####') : utPosState == -1 and utSellEnabled ? str.tostring(utTrailSell, '#.#####') : '—'
+string utAtrTrailSide = utPosState == 1 ? ' (BUY)' : utPosState == -1 ? ' (SELL)' : ''
+
+var table utDashTable = na
+var string utPrevPlacement = ''
+
+if utModuleActive and utDashOnInput and (na(utDashTable) or utPanelPlacementInput != utPrevPlacement)
+    if not na(utDashTable)
+        table.clear(utDashTable, 0, 0, 0, 0)
+    utDashTable := switch utPanelPlacementInput
+        'Top-Right' => table.new(position.top_right, 1, 1, border_width=1)
+        'Top-Left' => table.new(position.top_left, 1, 1, border_width=1)
+        'Bottom-Right' => table.new(position.bottom_right, 1, 1, border_width=1)
+        'Bottom-Left' => table.new(position.bottom_left, 1, 1, border_width=1)
+        'Bottom-Center' => table.new(position.bottom_center, 1, 1, border_width=1)
+        => table.new(position.top_right, 1, 1, border_width=1)
+    utPrevPlacement := utPanelPlacementInput
+
+if utModuleActive and utDashOnInput and not na(utDashTable)
+    string utPanelText = '📊 MARKET STATUS' +
+         '\n━━━━━━━━━━━━━━━━━' +
+         '\nVolatility       | ' + str.tostring(utCalcVol(), '##.##') + '%' +
+         '\nVolume           | ' + str.tostring(utVolNow, '#.##') + ' (' + utVolBias + ')' +
+         '\nVWAP vs Price    | ' + utVwapPosition +
+         '\nMACD Bias        | ' + utMacdBias +
+         '\nStoch Bias       | ' + utStochState +
+         '\nRSI              | ' + str.tostring(ta.rsi(close, 14), '##.##') +
+         '\n' +
+         '\n📈 TREND Overall timeframes' +
+         '\n━━━━━━━━━━━━━━━━━' +
+         '\n 1m  | ' + trendStrHtF('1') + '    2h | ' + trendStrHtF('120') +
+         '\n 5m  | ' + trendStrHtF('5') + '    4h | ' + trendStrHtF('240') +
+         '\n15m  | ' + trendStrHtF('15') + '    1D | ' + trendStrHtF('D') +
+         '\n30m  | ' + trendStrHtF('30') + '    1W | ' + trendStrHtF('W') +
+         '\n 1h  | ' + trendStrHtF('60') + '    1M | ' + trendStrHtF('M') +
+         '\n' +
+         '\n💰 PRICE POSITION' +
+         '\n━━━━━━━━━━━━━━━━━' +
+         '\nToday’s Range %       | ' + utTodayDirection + ' ' + str.tostring(utTodayRangePerc, '##.##') +
+         '\nYesterday’s Range %   | ' + utPrevDayDirection + ' ' + str.tostring(utPrevRangePerc, '##.##') +
+         '\nYesterday’s High      | ' + str.tostring(utPrevHigh, '#.#####') +
+         '\nYesterday’s Low       | ' + str.tostring(utPrevLow, '#.#####') +
+         '\n' +
+         '\n━━━━━━━━━━━━━━━━━' +
+         '\n📊 ACTUAL IN TRADE PROGRESSION' +
+         '\n━━━━━━━━━━━━━━━━━' +
+         '\nATR state            | ' + utAtrState + ' (' + str.tostring(utAtrNow, '#.###') + ')' +
+         '\nATR Trailing stop' + utAtrTrailSide + ' | ' + utAtrTrailText
+    table.cell(utDashTable, 0, 0, utPanelText, text_color=utDashTextColorInput, text_size=size.small, text_halign=text.align_left, text_valign=text.align_top, bgcolor=utDashColorInput)
+else if (not utModuleActive or not utDashOnInput) and not na(utDashTable)
+    table.clear(utDashTable, 0, 0, 0, 0)
+    utDashTable := na
+    utPrevPlacement := ''
+
 // Combined script generated from repository indicators:
 // - FXN Asian Session Range
 // - ICT Concepts [LuxAlgo]
@@ -896,6 +1276,39 @@ if (showLastWeeklyHiLo and isBelowHourValidResolution())
         //label wkLow_label = label.new(x=bar_index[4], y=lwl, text="PWL", color=color.new(color.black,100), style=label.style_none, textcolor=support_last_week_line_label_color, size=nlabelsize)
         lwkLow_label := label.new(time - (time-time[1])*14, lwl, "PWL", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_last_week_line_label_color, nlabelsize)
         label.delete(lwkLow_label[1])
+
+// =================================================================================================
+// UT Support & Resistance Display (deduplicated against core levels)
+// =================================================================================================
+float utSrTolerance() => math.max(math.max(syminfo.mintick, 1e-10) * 2.0, 1e-10)
+bool utSrMatches(float value, float reference) => not na(value) and not na(reference) and math.abs(value - reference) <= utSrTolerance()
+
+bool utSrConflicts(float value) =>
+    bool conflict = false
+    if showPreviousDayHiLo and isBelowHourValidResolution()
+        conflict := conflict or utSrMatches(value, pdh) or utSrMatches(value, pdl)
+    if showWeeklyHiLo and isBelowHourValidResolution()
+        conflict := conflict or utSrMatches(value, wh) or utSrMatches(value, wl)
+    if showLastWeeklyHiLo and isBelowHourValidResolution()
+        conflict := conflict or utSrMatches(value, lwh) or utSrMatches(value, lwl)
+    conflict
+
+bool utSrVisible = utModuleActive and utShowSrInput
+
+plot(utSrVisible and not utSrConflicts(utH1000) ? utH1000 : na, title='UT R1', color=close > utH1000 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+plot(utSrVisible and not utSrConflicts(utH750) ? utH750 : na, title='UT R2', color=close > utH750 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+plot(utSrVisible and not utSrConflicts(utH500) ? utH500 : na, title='UT R3', color=close > utH500 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+plot(utSrVisible and not utSrConflicts(utH250) ? utH250 : na, title='UT R4', color=close > utH250 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+plot(utSrVisible and not utSrConflicts(utH100) ? utH100 : na, title='UT R5', color=close > utH100 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+plot(utSrVisible and not utSrConflicts(utH50) ? utH50 : na, title='UT R6', color=close > utH50 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+plot(utSrVisible and not utSrConflicts(utH10) ? utH10 : na, title='UT R7', color=close > utH10 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+plot(utSrVisible and not utSrConflicts(utL1000) ? utL1000 : na, title='UT S1', color=close > utL1000 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+plot(utSrVisible and not utSrConflicts(utL750) ? utL750 : na, title='UT S2', color=close > utL750 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+plot(utSrVisible and not utSrConflicts(utL500) ? utL500 : na, title='UT S3', color=close > utL500 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+plot(utSrVisible and not utSrConflicts(utL250) ? utL250 : na, title='UT S4', color=close > utL250 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+plot(utSrVisible and not utSrConflicts(utL100) ? utL100 : na, title='UT S5', color=close > utL100 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+plot(utSrVisible and not utSrConflicts(utL50) ? utL50 : na, title='UT S6', color=close > utL50 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+plot(utSrVisible and not utSrConflicts(utL10) ? utL10 : na, title='UT S7', color=close > utL10 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
 
 // Show Hi / Low of Day Time
 
@@ -3008,10 +3421,73 @@ showBcol = input.bool(false, title="Show barcolors")
 showPrevVWAP = input.bool(false, title="Show previous VWAP close")
 Coloring = close > myvwap ? vwapAboveColor : vwapBelowColor
 av = myvwap
+ntzDayHigh = request.security(syminfo.tickerid, 'D', high)
+ntzDayLow = request.security(syminfo.tickerid, 'D', low)
+ntzDayRange = ntzDayHigh - ntzDayLow
+ntzFibLower = ntzDayLow + ntzDayRange * 0.45
+ntzFibUpper = ntzDayLow + ntzDayRange * 0.55
+ntzClose5 = request.security(syminfo.tickerid, '5', close)
+ntzClose15 = request.security(syminfo.tickerid, '15', close)
+ntzWithin5 = ntzDayRange > 0 ? ntzClose5 >= ntzFibLower and ntzClose5 <= ntzFibUpper : false
+ntzWithin15 = ntzDayRange > 0 ? ntzClose15 >= ntzFibLower and ntzClose15 <= ntzFibUpper : false
+ntzChochActive = currentAlerts.internalBullishCHoCH or currentAlerts.internalBearishCHoCH or currentAlerts.swingBullishCHoCH or currentAlerts.swingBearishCHoCH
+ntzCurrentMssDir = MSS.dir
+ntzMssActive = ntzCurrentMssDir != ntzPrevMssDir
+ntzPrevMssDir := ntzCurrentMssDir
+ntzAtr14 = ta.atr(14)
+ntzNearVwap = not na(myvwap) and nz(ntzAtr14) > 0 ? math.abs(close - myvwap) <= 0.25 * ntzAtr14 : false
+ntzVolumeAvg = ta.sma(volume, 50)
+ntzLowVolume = not na(ntzVolumeAvg) and volume < ntzVolumeAvg
+ntz = enableNtzInput and ntzWithin5 and ntzWithin15 and not ntzChochActive and not ntzMssActive and utSignalMissingOrConflict and ntzNearVwap and ntzLowVolume
+
+alertcondition(enableNtzAlertInput and ntz, 'No Trade Zone', 'Price is in NO TRADE ZONE – skip new entries.')
+
+if showNtzLabelInput and ntz
+    ntzLabelPrice = high + nz(ntzAtr14, 0) * 0.25
+    ntzLabelPrice := math.max(ntzLabelPrice, high)
+    if na(ntzLabel)
+        ntzLabel := label.new(bar_index, ntzLabelPrice, 'NO TRADE ZONE', xloc = xloc.bar_index, style = label.style_label_up, size = size.small, color = color.new(color.yellow, 0), textcolor = color.black)
+    else
+        label.set_xy(ntzLabel, bar_index, ntzLabelPrice)
+        label.set_text(ntzLabel, 'NO TRADE ZONE')
+        label.set_color(ntzLabel, color.new(color.yellow, 0))
+        label.set_textcolor(ntzLabel, color.black)
+        label.set_style(ntzLabel, label.style_label_up)
+else if (not showNtzLabelInput or not ntz) and not na(ntzLabel)
+    label.delete(ntzLabel)
+    ntzLabel := na
+
+bgcolor(showNtzBackgroundInput and ntz ? color.new(color.yellow, 82) : na)
+
+utAllowEntries = utModuleActive and not ntz
+utPlotBuyShape = utAllowEntries and utBuySignalVisible
+utPlotSellShape = utAllowEntries and utSellSignalVisible
+utTrailBuyPlotValue = utModuleActive and utShowTrailBuyInput ? utTrailBuy : na
+utTrailSellPlotValue = utModuleActive and utShowTrailSellInput ? utTrailSell : na
+utSignalPlotValue = utModuleActive ? utSignalLineValue : na
+utBarColorConditional = utAllowEntries ? utBarColorSeries : na
+vwapColorConditional = showBcol ? Coloring : na
+finalBarColor = not na(utBarColorConditional) ? utBarColorConditional : vwapColorConditional
+utBuyAlertCondition = utAllowEntries and utBuySignalConfirmed
+utSellAlertCondition = utAllowEntries and utSellSignalConfirmed
+
 prevwap := newSession ? myvwap[1] : prevwap[1]
 plot(showPrevVWAP ? prevwap : na, style=plot.style_circles, color=close > prevwap ? prevVwapAboveColor : prevVwapBelowColor)
 A = plot(av, style=plot.style_circles, color=Coloring)
-barcolor(showBcol ? Coloring : na)
+barcolor(finalBarColor)
+
+plotshape(utPlotBuyShape, title='UT Buy', style=shape.labelup, location=location.belowbar, color=color.green, textcolor=color.white, size=size.tiny, text='Buy')
+plotshape(utPlotSellShape, title='UT Sell', style=shape.labeldown, location=location.abovebar, color=color.red, textcolor=color.white, size=size.tiny, text='Sell')
+plot(utTrailBuyPlotValue, title='UT Bot Buy Trail', color=color.new(color.green, 0), linewidth=1)
+plot(utTrailSellPlotValue, title='UT Bot Sell Trail', color=color.new(color.red, 0), linewidth=1)
+plot(utSignalPlotValue, color=color.blue, linewidth=2, title='LinReg Signal')
+plotcandle(open=utInLong ? utLinRegOpenSeries : na, high=utInLong ? utLinRegHighSeries : na, low=utInLong ? utLinRegLowSeries : na, close=utInLong ? utLinRegCloseSeries : na, title='LinReg Long (regime)', color=color.green, wickcolor=color.green, bordercolor=color.green)
+plotcandle(open=utInShort ? utLinRegOpenSeries : na, high=utInShort ? utLinRegHighSeries : na, low=utInShort ? utLinRegLowSeries : na, close=utInShort ? utLinRegCloseSeries : na, title='LinReg Short (regime)', color=color.red, wickcolor=color.red, bordercolor=color.red)
+plotcandle(open=utIsFlat and utDirUp ? utLinRegOpenSeries : na, high=utIsFlat and utDirUp ? utLinRegHighSeries : na, low=utIsFlat and utDirUp ? utLinRegLowSeries : na, close=utIsFlat and utDirUp ? utLinRegCloseSeries : na, title='LinReg Flat Green', color=color.green, wickcolor=color.green, bordercolor=color.green)
+plotcandle(open=utIsFlat and not utDirUp ? utLinRegOpenSeries : na, high=utIsFlat and not utDirUp ? utLinRegHighSeries : na, low=utIsFlat and not utDirUp ? utLinRegLowSeries : na, close=utIsFlat and not utDirUp ? utLinRegCloseSeries : na, title='LinReg Flat Red', color=color.red, wickcolor=color.red, bordercolor=color.red)
+
+alertcondition(utBuyAlertCondition, title='UT Long', message='UT Long')
+alertcondition(utSellAlertCondition, title='UT Short', message='UT Short')
 
 
 // =================================================================================================
