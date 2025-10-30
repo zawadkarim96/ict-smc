@@ -114,8 +114,10 @@ if utModuleActive and utSellEnabled
 else
     utTrailSell := na
 
-bool utAboveBuyCross = utModuleActive and utBuyEnabled and ta.crossover(utEmaBuy, utTrailBuy)
-bool utBelowSellCross = utModuleActive and utSellEnabled and ta.crossover(utTrailSell, utEmaSell)
+bool utBuyCrossDetected = ta.crossover(utEmaBuy, utTrailBuy)
+bool utSellCrossDetected = ta.crossover(utTrailSell, utEmaSell)
+bool utAboveBuyCross = utModuleActive and utBuyEnabled and utBuyCrossDetected
+bool utBelowSellCross = utModuleActive and utSellEnabled and utSellCrossDetected
 
 bool utBuySignalRaw = utModuleActive and utBuyEnabled and (utSrcBuy > utTrailBuy) and utAboveBuyCross
 bool utSellSignalRaw = utModuleActive and utSellEnabled and (utSrcSell < utTrailSell) and utBelowSellCross
@@ -308,12 +310,13 @@ utCalcVol() =>
     float bot = _sma - _std2
     nz(30.0 + 40.0 * ((_atr - bot) / math.max(1e-10, (top - bot))), 50)
 
+float utVolatilityPercent = utCalcVol()
 float utVolNow = volume
 float utVolMa = ta.sma(volume, utVolMaLenInput)
 string utVolBias = utVolNow > utVolMa ? '🟢 Above Avg' : utVolNow < utVolMa ? '🔴 Below Avg' : '— Avg'
 float utVwapValue = ta.vwap(close)
 string utVwapPosition = close > utVwapValue ? '🟢 Price Above' : '🔴 Price Below'
-[float utMacdLine, float utMacdSignal, float utMacdHist] = ta.macd(close, utMacdFastLengthInput, utMacdSlowLengthInput, utMacdSignalLengthInput)
+[utMacdLine, utMacdSignal, utMacdHist] = ta.macd(close, utMacdFastLengthInput, utMacdSlowLengthInput, utMacdSignalLengthInput)
 string utMacdBias = utMacdLine > utMacdSignal ? '🟢 Bullish' : '🔴 Bearish'
 float utK = ta.sma(ta.stoch(close, high, low, utStochLengthInput), utStochKInput)
 float utD = ta.sma(utK, utStochDInput)
@@ -355,7 +358,7 @@ if utModuleActive and utDashOnInput and (na(utDashTable) or utPanelPlacementInpu
 if utModuleActive and utDashOnInput and not na(utDashTable)
     string utPanelText = '📊 MARKET STATUS' +
          '\n━━━━━━━━━━━━━━━━━' +
-         '\nVolatility       | ' + str.tostring(utCalcVol(), '##.##') + '%' +
+         '\nVolatility       | ' + str.tostring(utVolatilityPercent, '##.##') + '%' +
          '\nVolume           | ' + str.tostring(utVolNow, '#.##') + ' (' + utVolBias + ')' +
          '\nVWAP vs Price    | ' + utVwapPosition +
          '\nMACD Bias        | ' + utMacdBias +
