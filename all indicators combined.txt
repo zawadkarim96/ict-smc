@@ -329,6 +329,18 @@ string utAtrTrailSide = utPosState == 1 ? ' (BUY)' : utPosState == -1 ? ' (SELL)
 var table utDashTable = na
 var string utPrevPlacement = ''
 
+float utRsiValue = ta.rsi(close, 14)
+string utTrend1m = trendStrHtF('1')
+string utTrend2h = trendStrHtF('120')
+string utTrend5m = trendStrHtF('5')
+string utTrend4h = trendStrHtF('240')
+string utTrend15m = trendStrHtF('15')
+string utTrend1d = trendStrHtF('D')
+string utTrend30m = trendStrHtF('30')
+string utTrend1w = trendStrHtF('W')
+string utTrend1h = trendStrHtF('60')
+string utTrend1mth = trendStrHtF('M')
+
 if utModuleActive and utDashOnInput and (na(utDashTable) or utPanelPlacementInput != utPrevPlacement)
     if not na(utDashTable)
         table.clear(utDashTable, 0, 0, 0, 0)
@@ -349,15 +361,15 @@ if utModuleActive and utDashOnInput and not na(utDashTable)
          '\nVWAP vs Price    | ' + utVwapPosition +
          '\nMACD Bias        | ' + utMacdBias +
          '\nStoch Bias       | ' + utStochState +
-         '\nRSI              | ' + str.tostring(ta.rsi(close, 14), '##.##') +
+         '\nRSI              | ' + str.tostring(utRsiValue, '##.##') +
          '\n' +
          '\n📈 TREND Overall timeframes' +
          '\n' +
-         '\n 1m  | ' + trendStrHtF('1') + '    2h | ' + trendStrHtF('120') +
-         '\n 5m  | ' + trendStrHtF('5') + '    4h | ' + trendStrHtF('240') +
-         '\n15m  | ' + trendStrHtF('15') + '    1D | ' + trendStrHtF('D') +
-         '\n30m  | ' + trendStrHtF('30') + '    1W | ' + trendStrHtF('W') +
-         '\n 1h  | ' + trendStrHtF('60') + '    1M | ' + trendStrHtF('M') +
+         '\n 1m  | ' + utTrend1m + '    2h | ' + utTrend2h +
+         '\n 5m  | ' + utTrend5m + '    4h | ' + utTrend4h +
+         '\n15m  | ' + utTrend15m + '    1D | ' + utTrend1d +
+         '\n30m  | ' + utTrend30m + '    1W | ' + utTrend1w +
+         '\n 1h  | ' + utTrend1h + '    1M | ' + utTrend1mth +
          '\n' +
          '\n💰 PRICE POSITION' +
          '\n' +
@@ -379,31 +391,31 @@ else if (not utModuleActive or not utDashOnInput) and not na(utDashTable)
 
 
 
-user_ssth = input.string('Start Session Hour (EST)', '20', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
-user_sstm = input.string('Start Session Minute (EST)', '00', options=['00', '15', '30', '45'])
+user_ssth = input.string('20', 'Start Session Hour (EST)', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
+user_sstm = input.string('00', 'Start Session Minute (EST)', options=['00', '15', '30', '45'])
 
-user_esth = input.string('End Session Hour (EST)', '02', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
-user_estm = input.string('End Session Minute (EST)', '00', options=['00', '15', '30', '45'])
+user_esth = input.string('02', 'End Session Hour (EST)', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
+user_estm = input.string('00', 'End Session Minute (EST)', options=['00', '15', '30', '45'])
 
-user_elth = input.string('Extend Session Lines Until Hour (EST)', '11', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
-user_eltm = input.string('Extend Session Lines Until Minute (EST)', '30', options=['00', '15', '30', '45'])
+user_elth = input.string('11', 'Extend Session Lines Until Hour (EST)', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
+user_eltm = input.string('30', 'Extend Session Lines Until Minute (EST)', options=['00', '15', '30', '45'])
 
 
 
-user_box_line_color = input.string('Asian Range Border Color', 'blue', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
+user_box_line_color = input.string('blue', 'Asian Range Border Color', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
 boxLineWidthInput = input.int(title="Asian Box Line Width", defval=1)
 boxLineWidth = clampInt(boxLineWidthInput, 0, 10)
-user_box_line_style = input.string('Asian Box Line Style', 'solid', options=['solid', 'dashed', 'dotted'])
+user_box_line_style = input.string('solid', 'Asian Box Line Style', options=['solid', 'dashed', 'dotted'])
 
 sessionLineWidthInput = input.int(title="Session High / Low / Mid Line Width", defval=2)
 sessionLineWidth = clampInt(sessionLineWidthInput, 0, 20)
-user_upperlower_line_style = input.string('Session High / Low Line Style', 'dotted', options=['solid', 'dashed', 'dotted'])
+user_upperlower_line_style = input.string('dotted', 'Session High / Low Line Style', options=['solid', 'dashed', 'dotted'])
 
-user_midline_color = input.string('Middle Range Line Color', 'orange', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
-user_middle_line_style = input.string('Middle Range Line Style', 'dotted', options=['solid', 'dashed', 'dotted'])
+user_midline_color = input.string('orange', 'Middle Range Line Color', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
+user_middle_line_style = input.string('dotted', 'Middle Range Line Style', options=['solid', 'dashed', 'dotted'])
 
-user_text_color = input.string('Text Color', 'blue', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
-user_label_size = input.string('Text Size', 'normal', options=['tiny', 'small', 'normal', 'large'])
+user_text_color = input.string('blue', 'Text Color', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
+user_label_size = input.string('normal', 'Text Size', options=['tiny', 'small', 'normal', 'large'])
 show_asian_session = input.bool(defval=true, title="Show Asian Session Box")
 
 
@@ -411,54 +423,54 @@ show_london_session = input.bool(defval=true, title="Show London Session Box")
 show_london_session_rng = input.bool(defval=true, title="Show London Session Range Pips")
 
 
-london_ssth = input.string('London Start Hour (EST)', '03', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
-london_sstm = input.string('London Start Minute (EST)', '00', options=['00', '15', '30', '45'])
+london_ssth = input.string('03', 'London Start Hour (EST)', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
+london_sstm = input.string('00', 'London Start Minute (EST)', options=['00', '15', '30', '45'])
 
-london_esth = input.string('London End Hour (EST)', '07', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
-london_estm = input.string('London End Minute (EST)', '00', options=['00', '15', '30', '45'])
+london_esth = input.string('07', 'London End Hour (EST)', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
+london_estm = input.string('00', 'London End Minute (EST)', options=['00', '15', '30', '45'])
 
 
-luser_box_line_color = input.string('London Range Border Color', 'teal', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
+luser_box_line_color = input.string('teal', 'London Range Border Color', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
 lboxLineWidthInput = input.int(title="London Box Line Width", defval=1)
 lboxLineWidth = clampInt(lboxLineWidthInput, 0, 10)
-luser_box_line_style = input.string('London Box Line Style', 'solid', options=['solid', 'dashed', 'dotted'])
+luser_box_line_style = input.string('solid', 'London Box Line Style', options=['solid', 'dashed', 'dotted'])
 
 lsessionLineWidthInput = input.int(title="Session High / Low / Mid Line Width", defval=2)
 lsessionLineWidth = clampInt(lsessionLineWidthInput, 0, 20)
-luser_upperlower_line_style = input.string('Session High / Low Line Style', 'dotted', options=['solid', 'dashed', 'dotted'])
+luser_upperlower_line_style = input.string('dotted', 'Session High / Low Line Style', options=['solid', 'dashed', 'dotted'])
 
-luser_midline_color = input.string('Middle Range Line Color', 'teal', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
-luser_middle_line_style = input.string('Middle Range Line Style', 'dotted', options=['solid', 'dashed', 'dotted'])
+luser_midline_color = input.string('teal', 'Middle Range Line Color', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
+luser_middle_line_style = input.string('dotted', 'Middle Range Line Style', options=['solid', 'dashed', 'dotted'])
 
-luser_text_color = input.string('Text Color', 'teal', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
-luser_label_size = input.string('Text Size', 'normal', options=['tiny', 'small', 'normal', 'large'])
+luser_text_color = input.string('teal', 'Text Color', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
+luser_label_size = input.string('normal', 'Text Size', options=['tiny', 'small', 'normal', 'large'])
 
 
 
 show_ny_session = input.bool(defval=true, title="Show New York Session Box")
 show_ny_session_rng = input.bool(defval=true, title="Show New York Session Range Pips")
 
-ny_ssth = input.string('New York Start Hour (EST)', '08', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
-ny_sstm = input.string('New York Start Minute (EST)', '00', options=['00', '15', '30', '45'])
+ny_ssth = input.string('08', 'New York Start Hour (EST)', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
+ny_sstm = input.string('00', 'New York Start Minute (EST)', options=['00', '15', '30', '45'])
 
-ny_esth = input.string('New York End Hour (EST)', '12', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
-ny_estm = input.string('New York End Minute (EST)', '00', options=['00', '15', '30', '45'])
+ny_esth = input.string('12', 'New York End Hour (EST)', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
+ny_estm = input.string('00', 'New York End Minute (EST)', options=['00', '15', '30', '45'])
 
 
-nuser_box_line_color = input.string('New York Range Border Color', 'silver', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
+nuser_box_line_color = input.string('silver', 'New York Range Border Color', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
 nboxLineWidthInput = input.int(title="New York Box Line Width", defval=1)
 nboxLineWidth = clampInt(nboxLineWidthInput, 0, 10)
-nuser_box_line_style = input.string('New York Box Line Style', 'solid', options=['solid', 'dashed', 'dotted'])
+nuser_box_line_style = input.string('solid', 'New York Box Line Style', options=['solid', 'dashed', 'dotted'])
 
 nsessionLineWidthInput = input.int(title="Session High / Low / Mid Line Width", defval=2)
 nsessionLineWidth = clampInt(nsessionLineWidthInput, 0, 20)
-nuser_upperlower_line_style = input.string('Session High / Low Line Style', 'dotted', options=['solid', 'dashed', 'dotted'])
+nuser_upperlower_line_style = input.string('dotted', 'Session High / Low Line Style', options=['solid', 'dashed', 'dotted'])
 
-nuser_midline_color = input.string('Middle Range Line Color', 'silver', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
-nuser_middle_line_style = input.string('Middle Range Line Style', 'dotted', options=['solid', 'dashed', 'dotted'])
+nuser_midline_color = input.string('silver', 'Middle Range Line Color', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
+nuser_middle_line_style = input.string('dotted', 'Middle Range Line Style', options=['solid', 'dashed', 'dotted'])
 
-nuser_text_color = input.string('Text Color', 'silver', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
-nuser_label_size = input.string('Text Size', 'normal', options=['tiny', 'small', 'normal', 'large'])
+nuser_text_color = input.string('silver', 'Text Color', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
+nuser_label_size = input.string('normal', 'Text Size', options=['tiny', 'small', 'normal', 'large'])
 
 showADR = input.bool(defval=true, title="Show Average Daily Range")
 is_forex_pips = input.bool(defval=true, title="Display average range as forex pips?")
@@ -468,27 +480,27 @@ dailyAdrLengthInput = input.int(defval=21, title="ADR Length parameter (Days - d
 daily_adr_length = nonNegativeInt(dailyAdrLengthInput)
 
 showPreviousDayHiLo = input.bool(defval=true, title="Show Previous Days High / Low")
-previousDayHiLoColor = input.string('Previous Days Line Color', 'yellow', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
+previousDayHiLoColor = input.string('yellow', 'Previous Days Line Color', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
 supportLineWidthInput = input.int(title="Previous Days Line Width", defval=1)
 supportLineWidth = clampInt(supportLineWidthInput, 0, 10)
-previousDayHiLoLineStyle = input.string('Previous Days Line Style', 'dashed', options=['solid', 'dashed', 'dotted'])
+previousDayHiLoLineStyle = input.string('dashed', 'Previous Days Line Style', options=['solid', 'dashed', 'dotted'])
 showHiLoPriceRange = input.bool(defval=false, title="Show Previous Days Range")
 showHiLoPriceLabel = input.bool(defval=false, title="Show Line Label (YH / YL)")
 
 
 showLastWeeklyHiLo = input.bool(defval=true, title="Show Last Weeks High / Low")
-lastWeeklyHiLoColor = input.string('Last Week Line Color', 'orange', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
+lastWeeklyHiLoColor = input.string('orange', 'Last Week Line Color', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
 supportLastWeekLineWidthInput = input.int(title="Last Week Line Width", defval=1)
 supportLastWeekLineWidth = clampInt(supportLastWeekLineWidthInput, 0, 10)
-lastWeeklyHiLoStyle = input.string('Last Week Line Style', 'dashed', options=['solid', 'dashed', 'dotted'])
+lastWeeklyHiLoStyle = input.string('dashed', 'Last Week Line Style', options=['solid', 'dashed', 'dotted'])
 lastWeeklyHiLoShowLabel = input.bool(defval=true, title="Show Line Label (PWH / PWL)")
 
 
 showWeeklyHiLo = input.bool(defval=false, title="Show This Weeks High / Low")
-weeklyHiLoColor = input.string('This Weeks Line Color', 'olive', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
+weeklyHiLoColor = input.string('olive', 'This Weeks Line Color', options=['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'])
 supportWeekLineWidthInput = input.int(title="This Weeks Line Width", defval=1)
 supportWeekLineWidth = clampInt(supportWeekLineWidthInput, 0, 10)
-weeklyHiLoStyle = input.string('This Weeks Line Style', 'dashed', options=['solid', 'dashed', 'dotted'])
+weeklyHiLoStyle = input.string('dashed', 'This Weeks Line Style', options=['solid', 'dashed', 'dotted'])
 weeklyHiLoShowLabel = input.bool(defval=false, title="Show Line Label (WH / WL)")
 
 showHiLoTime = input.bool(defval=false, title="Show Hi / Low Time of Day (Always Displays Eastern Standard Time)")
