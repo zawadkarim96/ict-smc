@@ -8,22 +8,25 @@ ema22_transparency = input.int(0, 'Transparency', minval=0, maxval=100, group=gr
 ema22_value = ta.ema(close, 22)
 plot(show_ema22 ? ema22_value : na, 'EMA 22', color.new(ema22_color, ema22_transparency))
 
-colorOptions = ["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"]
-hourOptions = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"]
-minuteOptions = ["00", "15", "30", "45"]
-lineStyleOptions = ["solid", "dashed", "dotted"]
-textSizeOptions = ["tiny", "small", "normal", "large"]
-
 clampInt(int value, int minValue, int maxValue) => value < minValue ? minValue : value > maxValue ? maxValue : value
 clampFloat(float value, float minValue, float maxValue) => math.max(minValue, math.min(maxValue, value))
 nonNegativeInt(int value) => value < 0 ? 0 : value
 ensureMinInt(int value, int minValue) => value < minValue ? minValue : value
 
-sessionHourInput(string title, string defval) => input.string(title=title, defval=defval, options=hourOptions)
-sessionMinuteInput(string title, string defval) => input.string(title=title, defval=defval, options=minuteOptions)
-colorInput(string title, string defval) => input.string(title=title, defval=defval, options=colorOptions)
-lineStyleInput(string title, string defval) => input.string(title=title, defval=defval, options=lineStyleOptions)
-textSizeInput(string title, string defval) => input.string(title=title, defval=defval, options=textSizeOptions)
+sessionHourInput(string title, string defval) =>
+    input.string(title=title, defval=defval, options=["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"])
+
+sessionMinuteInput(string title, string defval) =>
+    input.string(title=title, defval=defval, options=["00", "15", "30", "45"])
+
+colorInput(string title, string defval) =>
+    input.string(title=title, defval=defval, options=["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red", "silver", "teal", "white", "yellow"])
+
+lineStyleInput(string title, string defval) =>
+    input.string(title=title, defval=defval, options=["solid", "dashed", "dotted"])
+
+textSizeInput(string title, string defval) =>
+    input.string(title=title, defval=defval, options=["tiny", "small", "normal", "large"])
 
 string groupUtCombo = "UT Bot + Linear Regression"
 bool enableUtComboInput = input.bool(false, 'Enable UT Bot + Linear Regression', group=groupUtCombo)
