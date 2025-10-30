@@ -1,4 +1,4 @@
-//@version=6
+//@version=5
 indicator('ICT SMC All Indicators', 'ICTSMC-All', overlay=true, max_labels_count=500, max_lines_count=500, max_boxes_count=500, max_bars_back=5000)
 
 string group_ema22 = "EMA 22 Settings ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -1283,11 +1283,11 @@ if (showLastWeeklyHiLo and isBelowHourValidResolution())
 // =================================================================================================
 // UT Support & Resistance Display (deduplicated against core levels)
 // =================================================================================================
-float utSrTolerance() => math.max(math.max(syminfo.mintick, 1e-10) * 2.0, 1e-10)
-bool utSrMatches(float value, float reference) => not na(value) and not na(reference) and math.abs(value - reference) <= utSrTolerance()
+utSrTolerance() => math.max(math.max(syminfo.mintick, 1e-10) * 2.0, 1e-10)
+utSrMatches(value, reference) => not na(value) and not na(reference) and math.abs(value - reference) <= utSrTolerance()
 
-bool utSrConflicts(float value) =>
-    bool conflict = false
+utSrConflicts(value) =>
+    conflict = false
     if showPreviousDayHiLo and isBelowHourValidResolution()
         conflict := conflict or utSrMatches(value, pdh) or utSrMatches(value, pdl)
     if showWeeklyHiLo and isBelowHourValidResolution()
