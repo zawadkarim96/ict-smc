@@ -3658,11 +3658,12 @@ string htfSecondaryTfInput = input.string('W', 'Secondary Bias Timeframe', optio
 string htfCorrelationSymbolInput = input.string('DXY', 'Correlation Symbol (SMT)', group = htfGroup)
 int htfSwingLookbackInput = input.int(10, 'Structure Lookback', minval = 3, maxval = 50, group = htfGroup)
 
-float getEma(series float src, int len) => len > 0 ? ta.ema(src, len) : src
+getEma(src, len) => len > 0 ? ta.ema(src, len) : src
 
-string biasLabel(float fast, float slow) => fast > slow ? 'Bullish' : fast < slow ? 'Bearish' : 'Neutral'
+biasLabel(fast, slow) => fast > slow ? 'Bullish' : fast < slow ? 'Bearish' : 'Neutral'
 
-color biasColor(string biasText) => biasText == 'Bullish' ? color.new(color.green, 0) : biasText == 'Bearish' ? color.new(color.red, 0) : color.new(color.orange, 0)
+biasColor(biasText) =>
+    biasText == 'Bullish' ? color.new(color.green, 0) : biasText == 'Bearish' ? color.new(color.red, 0) : color.new(color.orange, 0)
 
 float primaryCloseSeries = request.security(syminfo.tickerid, htfPrimaryTfInput, close)
 float primaryHighSeries = request.security(syminfo.tickerid, htfPrimaryTfInput, high)
