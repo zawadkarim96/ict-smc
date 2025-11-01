@@ -979,6 +979,13 @@ SupportFromStartWeekDate = timestamp(year, month, dayofmonth - isSupportStartTim
 SupportFromDate = timestamp(year, month, dayofmonth - isSupportStartTimeAlignment, start_support_hour_int, start_support_minute_int)
 SupportToDate = timestamp(year, month, dayofmonth + isSupportEndTimeAlignment, end_support_hour_int, end_support_minute_int) - chart_time_period_int
 
+var label pdHi_label = na
+var label pdLow_label = na
+var label wkHi_label = na
+var label wkLow_label = na
+var label lwkHi_label = na
+var label lwkLow_label = na
+
 if (showPreviousDayHiLo and isBelowHourValidResolution())
 
 
@@ -994,24 +1001,29 @@ if (showPreviousDayHiLo and isBelowHourValidResolution())
     if (showHiLoPriceRange and pdCheckIsNewDay)
 
         if (showHiLoPriceLabel)
-            label pdHi_label = label.new(time - (time-time[1])*15, pdh_label_price, "YH (" + str.tostring(((pdh_label_price-pdl_label_price)/(syminfo.mintick))/10) + ")", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_line_label_color, nlabelsize)
-            label.delete(pdHi_label[1])
+            if not na(pdHi_label)
+                label.delete(pdHi_label)
+            pdHi_label := label.new(time - (time-time[1])*15, pdh_label_price, "YH (" + str.tostring(((pdh_label_price-pdl_label_price)/(syminfo.mintick))/10) + ")", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_line_label_color, nlabelsize)
 
-            label pdLow_label = label.new(time - (time-time[1])*14, pdl_label_price, "YL", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_line_label_color, nlabelsize)
-            label.delete(pdLow_label[1])
+            if not na(pdLow_label)
+                label.delete(pdLow_label)
+            pdLow_label := label.new(time - (time-time[1])*14, pdl_label_price, "YL", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_line_label_color, nlabelsize)
         else
-            label pdHi_label = label.new(time - (time-time[1])*15, pdh_label_price, str.tostring(((pdh_label_price-pdl_label_price)/(syminfo.mintick))/10), xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_line_label_color, nlabelsize)
-            label.delete(pdHi_label[1])
+            if not na(pdHi_label)
+                label.delete(pdHi_label)
+            pdHi_label := label.new(time - (time-time[1])*15, pdh_label_price, str.tostring(((pdh_label_price-pdl_label_price)/(syminfo.mintick))/10), xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_line_label_color, nlabelsize)
 
 
 
     if (showHiLoPriceLabel and not showHiLoPriceRange and pdCheckIsNewDay)
 
-        label pdHi_label = label.new(time - (time-time[1])*14, pdh_label_price, "YH", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_line_label_color, nlabelsize)
-        label.delete(pdHi_label[1])
+        if not na(pdHi_label)
+            label.delete(pdHi_label)
+        pdHi_label := label.new(time - (time-time[1])*14, pdh_label_price, "YH", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_line_label_color, nlabelsize)
 
-        label pdLow_label = label.new(time - (time-time[1])*14, pdl_label_price, "YL", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_line_label_color, nlabelsize)
-        label.delete(pdLow_label[1])
+        if not na(pdLow_label)
+            label.delete(pdLow_label)
+        pdLow_label := label.new(time - (time-time[1])*14, pdl_label_price, "YL", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_line_label_color, nlabelsize)
 
 if (showWeeklyHiLo and isBelowHourValidResolution())
 
@@ -1023,13 +1035,13 @@ if (showWeeklyHiLo and isBelowHourValidResolution())
 
     if (weeklyHiLoShowLabel and is_new_day())
 
-        label wkHi_label = label.new(time - (time-time[1])*14, wh, "WH", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_week_line_color, nlabelsize)
-        label.delete(wkHi_label[1])
+        if not na(wkHi_label)
+            label.delete(wkHi_label)
+        wkHi_label := label.new(time - (time-time[1])*14, wh, "WH", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_week_line_color, nlabelsize)
 
-        label wkLow_label = label.new(time - (time-time[1])*14, wl, "WL", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_week_line_color, nlabelsize)
-        label.delete(wkLow_label[1])
-
-var label lwkLow_label = na
+        if not na(wkLow_label)
+            label.delete(wkLow_label)
+        wkLow_label := label.new(time - (time-time[1])*14, wl, "WL", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_week_line_color, nlabelsize)
 
 if (showLastWeeklyHiLo and isBelowHourValidResolution())
 
@@ -1041,11 +1053,13 @@ if (showLastWeeklyHiLo and isBelowHourValidResolution())
 
     if (lastWeeklyHiLoShowLabel and is_new_day())
 
-        label lwkHi_label = label.new(time - (time-time[1])*14, lwh, "PWH", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_last_week_line_label_color, nlabelsize)
-        label.delete(lwkHi_label[1])
+        if not na(lwkHi_label)
+            label.delete(lwkHi_label)
+        lwkHi_label := label.new(time - (time-time[1])*14, lwh, "PWH", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_last_week_line_label_color, nlabelsize)
 
+        if not na(lwkLow_label)
+            label.delete(lwkLow_label)
         lwkLow_label := label.new(time - (time-time[1])*14, lwl, "PWL", xloc.bar_time, yloc.price, color.new(color.black,100), label.style_none, support_last_week_line_label_color, nlabelsize)
-        label.delete(lwkLow_label[1])
 
 utSrTolerance() => math.max(math.max(syminfo.mintick, 1e-10) * 2.0, 1e-10)
 utSrMatches(float value, float reference) => not na(value) and not na(reference) and math.abs(value - reference) <= utSrTolerance()
@@ -1435,27 +1449,42 @@ method display(ob id, color css, color break_css, string dir)=>
     if showOB
         if id.breaker
             a_bx_ln_lb.unshift(
-             bx_ln_lb.new(
-                box.new(id.loc, id.top, timenow + (tf_msec * 10), id.btm, na
-            , bgcolor = break_css
-            , extend  = extend.none
-            , xloc    = xloc.bar_time)
-            , na
-            , na)
+                bx_ln_lb.new(
+                    box.new(id.loc, id.top, timenow + (tf_msec * 10), id.btm, na,
+                        bgcolor = break_css,
+                        extend  = extend.none,
+                        xloc    = xloc.bar_time
+                    ),
+                    na,
+                    na
+                )
             )
         else
             y  = dir == 'bl' ? id.btm : id.top
             s  = dir == 'bl' ? label.style_label_up : label.style_label_down
             a_bx_ln_lb.unshift(
-             bx_ln_lb.new(
-                na
-              , line.new(id.loc,   y  , id.loc  + (tf_msec * 10),    y
-              , xloc    = xloc.bar_time, color=css, width=2)
-              , label.new(              id.loc  + (tf_msec * 10),    y
-              , text  = dir == 'bl' ? '+OB' : '-OB'
-              , xloc  = xloc.bar_time
-              , style = s    , color = na
-              , textcolor=css, size  = size.small))
+                bx_ln_lb.new(
+                    na,
+                    line.new(
+                        id.loc,
+                        y,
+                        id.loc + (tf_msec * 10),
+                        y,
+                        xloc  = xloc.bar_time,
+                        color = css,
+                        width = 2
+                    ),
+                    label.new(
+                        id.loc + (tf_msec * 10),
+                        y,
+                        text  = dir == 'bl' ? '+OB' : '-OB',
+                        xloc  = xloc.bar_time,
+                        style = s,
+                        color = na,
+                        textcolor = css,
+                        size  = size.small
+                    )
+                )
             )
 
 swings(int len)=>
