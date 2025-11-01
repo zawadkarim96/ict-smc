@@ -3277,7 +3277,7 @@ var Trace trace = Trace.new()
 color color_transparent = #ffffff00
 
 
-line_style lineStyleFromSetting(string styleName) =>
+lineStyleFromSetting(string styleName) =>
     switch styleName
         '----' => line.style_dashed
         '····' => line.style_dotted
@@ -3286,7 +3286,7 @@ line_style lineStyleFromSetting(string styleName) =>
 
 ensureTraceLine(line current, int x1, float y1, int x2, float y2, color lineColor, string styleSetting, int widthSetting) =>
     line result = current
-    line_style lineStyleValue = lineStyleFromSetting(styleSetting)
+    lineStyleValue = lineStyleFromSetting(styleSetting)
     if na(result)
         result := line.new(x1, y1, x2, y2, xloc = xloc.bar_index, color = lineColor, style = lineStyleValue, width = widthSetting)
     else
