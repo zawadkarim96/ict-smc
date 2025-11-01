@@ -1448,8 +1448,7 @@ method notransp(color css) => color.rgb(color.r(css), color.g(css), color.b(css)
 method display(ob id, color css, color break_css, string dir)=>
     if showOB
         if id.breaker
-            a_bx_ln_lb.unshift(
-                bx_ln_lb.new(
+            a_bx_ln_lb.unshift(bx_ln_lb.new(
                     box.new(id.loc, id.top, timenow + (tf_msec * 10), id.btm, na,
                         bgcolor = break_css,
                         extend  = extend.none,
@@ -1457,13 +1456,11 @@ method display(ob id, color css, color break_css, string dir)=>
                     ),
                     na,
                     na
-                )
-            )
+                ))
         else
             y  = dir == 'bl' ? id.btm : id.top
             s  = dir == 'bl' ? label.style_label_up : label.style_label_down
-            a_bx_ln_lb.unshift(
-                bx_ln_lb.new(
+            a_bx_ln_lb.unshift(bx_ln_lb.new(
                     na,
                     line.new(
                         id.loc,
@@ -1484,8 +1481,7 @@ method display(ob id, color css, color break_css, string dir)=>
                         textcolor = css,
                         size  = size.small
                     )
-                )
-            )
+                ))
 
 swings(int len)=>
     var os = 0
