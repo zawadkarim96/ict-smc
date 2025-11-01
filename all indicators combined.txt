@@ -3316,11 +3316,12 @@ ensureTraceLabel(label current, int x, float y, string textValue) =>
     result := refreshTraceLabel(result, x, y, textValue)
 
 updateLabelRef(label current, float x, float y, string textValue, color textColor, string sizeValue, styleValue) =>
+    int xInt = int(math.round(x))
     label result = current
     if na(result)
-        result := label.new(x, y, textValue, color = color_transparent, textcolor = textColor, style = styleValue, size = sizeValue)
+        result := label.new(xInt, y, textValue, color = color_transparent, textcolor = textColor, style = styleValue, size = sizeValue)
     else
-        label.set_xy(result, x, y)
+        label.set_xy(result, xInt, y)
         label.set_text(result, textValue)
         label.set_textcolor(result, textColor)
         label.set_size(result, sizeValue)
