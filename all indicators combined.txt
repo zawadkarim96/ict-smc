@@ -41,14 +41,7 @@ int utLongevityLabelOffsetInput = input.int(10, 'Label Offset (bars)', group=gro
 
 string groupUtAddOns = 'Add-ons (Panel & S/R)'
 bool utSrLinesInput = input.bool(false, 'Support & Resistance Lines', group=groupUtAddOns)
-bool utDashOnInput = input.bool(true, 'Dashboard Panel', group=groupUtAddOns)
-int utDashShiftBarsInput = input.int(60, 'Panel Right Shift (bars)', group=groupUtAddOns, minval=40, maxval=200)
-color utDashColorInput = input.color(color.new(#8fd46d, 80), 'Panel Background', inline='dash', group=groupUtAddOns)
-color utDashTextColorInput = input.color(color.white, 'Text Color', inline='dash', group=groupUtAddOns)
 int utVolMaLenInput = input.int(20, 'Volume MA Length', group=groupUtAddOns, minval=1)
-int utPanelAnchorBarsInput = input.int(300, 'Panel anchor bars (top-right)', group=groupUtAddOns, minval=100, maxval=9000)
-float utPanelPadPctInput = input.float(0.2, 'Panel vertical padding', group=groupUtAddOns, minval=0.0, maxval=0.40, step=0.005)
-string utPanelPlacementInput = input.string('Top-Right', 'Dashboard Placement', options=['Top-Right', 'Top-Left', 'Bottom-Right', 'Bottom-Left', 'Bottom-Center'], group=groupUtAddOns)
 
 string groupUtSupport = 'Support & Resistance'
 bool utShowSrInput = input.bool(true, 'Show Support & Resistance Lines', group=groupUtSupport)
@@ -297,99 +290,6 @@ utCalcVol() =>
     nz(30.0 + 40.0 * ((_atr - bot) / math.max(1e-10, (top - bot))), 50)
 
 float utVolatilityPercent = utCalcVol()
-float utVolNow = volume
-float utVolMa = ta.sma(volume, utVolMaLenInput)
-string utVolBias = utVolNow > utVolMa ? '🟢 Above Avg' : utVolNow < utVolMa ? '🔴 Below Avg' : '— Avg'
-float utVwapValue = ta.vwap(close)
-string utVwapPosition = close > utVwapValue ? '🟢 Price Above' : '🔴 Price Below'
-[utMacdLine, utMacdSignal, utMacdHist] = ta.macd(close, utMacdFastLengthInput, utMacdSlowLengthInput, utMacdSignalLengthInput)
-string utMacdBias = utMacdLine > utMacdSignal ? '🟢 Bullish' : '🔴 Bearish'
-float utK = ta.sma(ta.stoch(close, high, low, utStochLengthInput), utStochKInput)
-float utD = ta.sma(utK, utStochDInput)
-string utStochDirection = utK > utD ? '🟢 Up' : '🔴 Down'
-string utStochState = utStochDirection + ' but ' + (utK > 80 ? 'Overbought' : utK < 20 ? 'Oversold' : 'Neutral')
-float utAtrNow = ta.atr(14)
-float utAtrSma20 = ta.sma(utAtrNow, 20)
-string utAtrState = utAtrNow > utAtrSma20 * 1.20 ? '🟢 High' : utAtrNow < utAtrSma20 * 0.80 ? '🔴 Low' : '— Mid'
-float utTodayOpen = request.security(syminfo.tickerid, 'D', open)
-float utTodayClose = request.security(syminfo.tickerid, 'D', close)
-float utTodayHigh = request.security(syminfo.tickerid, 'D', high)
-float utTodayLow = request.security(syminfo.tickerid, 'D', low)
-string utTodayDirection = utTodayClose > utTodayOpen ? '🟢↑' : utTodayClose < utTodayOpen ? '🔴↓' : '➖'
-float utTodayRangePerc = (utTodayHigh - utTodayLow) / math.max(utTodayLow, syminfo.mintick) * 100
-float utPrevHigh = request.security(syminfo.tickerid, 'D', high[1])
-float utPrevLow = request.security(syminfo.tickerid, 'D', low[1])
-float utPrevOpen = request.security(syminfo.tickerid, 'D', open[1])
-float utPrevClose = request.security(syminfo.tickerid, 'D', close[1])
-float utPrevRangePerc = (utPrevHigh - utPrevLow) / math.max(utPrevLow, syminfo.mintick) * 100
-string utPrevDayDirection = utPrevClose > utPrevOpen ? '🟢↑' : utPrevClose < utPrevOpen ? '🔴↓' : '➖'
-string utAtrTrailText = utPosState == 1 and utBuyEnabled ? str.tostring(utTrailBuy, '#.#####') : utPosState == -1 and utSellEnabled ? str.tostring(utTrailSell, '#.#####') : '—'
-string utAtrTrailSide = utPosState == 1 ? ' (BUY)' : utPosState == -1 ? ' (SELL)' : ''
-
-var table utDashTable = na
-var string utPrevPlacement = ''
-
-float utRsiValue = ta.rsi(close, 14)
-string utTrend1m = trendStrHtF('1')
-string utTrend2h = trendStrHtF('120')
-string utTrend5m = trendStrHtF('5')
-string utTrend4h = trendStrHtF('240')
-string utTrend15m = trendStrHtF('15')
-string utTrend1d = trendStrHtF('D')
-string utTrend30m = trendStrHtF('30')
-string utTrend1w = trendStrHtF('W')
-string utTrend1h = trendStrHtF('60')
-string utTrend1mth = trendStrHtF('M')
-
-if utModuleActive and utDashOnInput and (na(utDashTable) or utPanelPlacementInput != utPrevPlacement)
-    if not na(utDashTable)
-        table.clear(utDashTable, 0, 0, 0, 0)
-    utDashTable := switch utPanelPlacementInput
-        'Top-Right' => table.new(position.top_right, 1, 1, border_width=1)
-        'Top-Left' => table.new(position.top_left, 1, 1, border_width=1)
-        'Bottom-Right' => table.new(position.bottom_right, 1, 1, border_width=1)
-        'Bottom-Left' => table.new(position.bottom_left, 1, 1, border_width=1)
-        'Bottom-Center' => table.new(position.bottom_center, 1, 1, border_width=1)
-        => table.new(position.top_right, 1, 1, border_width=1)
-    utPrevPlacement := utPanelPlacementInput
-
-if utModuleActive and utDashOnInput and not na(utDashTable)
-    string utPanelText = '📊 MARKET STATUS' +
-         '\n' +
-         '\nVolatility       | ' + str.tostring(utVolatilityPercent, '##.##') + '%' +
-         '\nVolume           | ' + str.tostring(utVolNow, '#.##') + ' (' + utVolBias + ')' +
-         '\nVWAP vs Price    | ' + utVwapPosition +
-         '\nMACD Bias        | ' + utMacdBias +
-         '\nStoch Bias       | ' + utStochState +
-         '\nRSI              | ' + str.tostring(utRsiValue, '##.##') +
-         '\n' +
-         '\n📈 TREND Overall timeframes' +
-         '\n' +
-         '\n 1m  | ' + utTrend1m + '    2h | ' + utTrend2h +
-         '\n 5m  | ' + utTrend5m + '    4h | ' + utTrend4h +
-         '\n15m  | ' + utTrend15m + '    1D | ' + utTrend1d +
-         '\n30m  | ' + utTrend30m + '    1W | ' + utTrend1w +
-         '\n 1h  | ' + utTrend1h + '    1M | ' + utTrend1mth +
-         '\n' +
-         '\n💰 PRICE POSITION' +
-         '\n' +
-         '\nToday’s Range %       | ' + utTodayDirection + ' ' + str.tostring(utTodayRangePerc, '##.##') +
-         '\nYesterday’s Range %   | ' + utPrevDayDirection + ' ' + str.tostring(utPrevRangePerc, '##.##') +
-         '\nYesterday’s High      | ' + str.tostring(utPrevHigh, '#.#####') +
-         '\nYesterday’s Low       | ' + str.tostring(utPrevLow, '#.#####') +
-         '\n' +
-         '\n' +
-         '\n📊 ACTUAL IN TRADE PROGRESSION' +
-         '\n' +
-         '\nATR state            | ' + utAtrState + ' (' + str.tostring(utAtrNow, '#.###') + ')' +
-         '\nATR Trailing stop' + utAtrTrailSide + ' | ' + utAtrTrailText
-    table.cell(utDashTable, 0, 0, utPanelText, text_color=utDashTextColorInput, text_size=size.small, text_halign=text.align_left, text_valign=text.align_top, bgcolor=utDashColorInput)
-else if (not utModuleActive or not utDashOnInput) and not na(utDashTable)
-    table.clear(utDashTable, 0, 0, 0, 0)
-    utDashTable := na
-    utPrevPlacement := ''
-
-
 
 user_ssth = input.string('20', 'Start Session Hour (EST)', options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
 user_sstm = input.string('00', 'Start Session Minute (EST)', options=['00', '15', '30', '45'])
@@ -3690,8 +3590,10 @@ int offset = settings.offset
 var CandleSet[] htfSets = array.from(htf1, htf2, htf3, htf4, htf5, htf6)
 
 for i = 0 to array.size(htfSets) - 1 by 1
+    array.get(htfSets, i).Monitor()
+
+for i = 0 to array.size(htfSets) - 1 by 1
     CandleSet htf = array.get(htfSets, i)
-    htf.Monitor()
     bool canProcess = htf.settings.show and helper.ValidTimeframe(htf.settings.htf) and cnt < last
     if canProcess
         bool showTrace = shouldShowTrace(cnt, last)
