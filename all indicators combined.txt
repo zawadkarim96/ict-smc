@@ -1281,15 +1281,15 @@ showLabels = input.bool  (          false, title = 'Show Historical Polarity Cha
 showLq     = input.bool  (           true         , title = 'Show Liquidity'         ,   group = 'Liquidity'                                                           )
 liquidityMarginInput = input.float (             4          , title = 'margin'                 ,   group = 'Liquidity'   , step = 0.1                               )
 a     = 10 / clampFloat(liquidityMarginInput, 2.0, 7.0)
-visLiqInput = input.int   (             2          , title = '# Visible Liq. boxes'   ,   group = 'Liquidity'        , tooltip = 'In the same direction' )
+visLiqInput = input.int   (             2          , title = '# Visible Liq. boxes'   ,   group = 'Liquidity'        )
 visLiq     = clampInt(visLiqInput, 1, 50)
 cLIQ_B     = input.color (color.new(#fa451c,  0), title = 'Buyside Liquidity  '    ,   group = 'Liquidity'                                                           )
 cLIQ_S     = input.color (color.new(#1ce4fa,  0), title = 'Sellside Liquidity'     ,   group = 'Liquidity'                                                           )
 
 shwFVG     = input.bool  (           true         , title = 'Show FVGs'              ,   group = 'Fair Value Gaps'                                                     )
 i_BPR      = input.bool  (           false        , title = 'Balance Price Range'    ,   group = 'Fair Value Gaps'                                                     )
-i_FVG      = input.string(           'FVG'        , title = o                        ,   group = 'Fair Value Gaps'  , options=['FVG', 'IFVG']                           , tooltip = 'Fair Value Gaps\nor\nImplied Fair Value Gaps'                        )
-visBxsInput = input.int   (             2          , title = '# Visible FVG\'s'       ,   group = 'Fair Value Gaps'  , tooltip = 'In the same direction' )
+i_FVG      = input.string(           'FVG'        , title = o                        ,   group = 'Fair Value Gaps'  , options=['FVG', 'IFVG']                           )
+visBxsInput = input.int   (             2          , title = '# Visible FVG\'s'       ,   group = 'Fair Value Gaps'  )
 visBxs     = clampInt(visBxsInput, 1, 20)
 
 cFVGbl     = input.color (color.new(#00e676,  0), title = 'Bullish FVG  '          ,   group = 'Fair Value Gaps'  , inline = 'FVGbl'                                 )
@@ -2329,76 +2329,56 @@ const string GAPS_GROUP                    = 'Fair Value Gaps'
 const string LEVELS_GROUP                  = 'Highs & Lows MTF'
 const string ZONES_GROUP                   = 'Premium & Discount Zones'
 
-const string modeTooltip                     = 'Allows to display historical Structure or only the recent ones'
-const string styleTooltip                    = 'Indicator color theme'
-const string showTrendTooltip                = 'Display additional candles with a color reflecting the current trend detected by structure'
-const string showInternalsTooltip            = 'Display internal market structure'
-const string internalFilterConfluenceTooltip = 'Filter non significant internal structure breakouts'
-const string showStructureTooltip            = 'Display swing market Structure'
-const string showSwingsTooltip               = 'Display swing point as labels on the chart'
-const string showHighLowSwingsTooltip        = 'Highlight most recent strong and weak high/low points on the chart'
-const string showInternalOrderBlocksTooltip  = 'Display internal order blocks on the chart\n\nNumber of internal order blocks to display on the chart'
-const string showSwingOrderBlocksTooltip     = 'Display swing order blocks on the chart\n\nNumber of internal swing blocks to display on the chart'
-const string orderBlockFilterTooltip         = 'Method used to filter out volatile order blocks \n\nIt is recommended to use the cumulative mean range method when a low amount of data is available'
-const string orderBlockMitigationTooltip     = 'Select what values to use for order block mitigation'
-const string showEqualHighsLowsTooltip       = 'Display equal highs and equal lows on the chart'
-const string equalHighsLowsLengthTooltip     = 'Number of bars used to confirm equal highs and equal lows'
-const string equalHighsLowsThresholdTooltip  = 'Sensitivity threshold in a range (0, 1) used for the detection of equal highs & lows\n\nLower values will return fewer but more pertinent results'
-const string showFairValueGapsTooltip        = 'Display fair values gaps on the chart'
-const string fairValueGapsThresholdTooltip   = 'Filter out non significant fair value gaps'
-const string fairValueGapsTimeframeTooltip   = 'Fair value gaps timeframe'
-const string fairValueGapsExtendTooltip      = 'Determine how many bars to extend the Fair Value Gap boxes on chart'
-const string showPremiumDiscountZonesTooltip = 'Display premium, discount, and equilibrium zones on chart'
 
-modeInput                       = input.string( HISTORICAL, 'Mode',                     group = SMART_GROUP,    tooltip = modeTooltip, options = [HISTORICAL, PRESENT])
-styleInput                      = input.string( COLORED,    'Style',                    group = SMART_GROUP,    tooltip = styleTooltip,options = [COLORED, MONOCHROME])
-showTrendInput                  = input(        false,      'Color Candles',            group = SMART_GROUP,    tooltip = showTrendTooltip)
+modeInput                       = input.string( HISTORICAL, 'Mode',                     group = SMART_GROUP, options = [HISTORICAL, PRESENT])
+styleInput                      = input.string( COLORED,    'Style',                    group = SMART_GROUP, options = [COLORED, MONOCHROME])
+showTrendInput                  = input(        false,      'Color Candles',            group = SMART_GROUP)
 
-showInternalsInput              = input(        true,       'Show Internal Structure',  group = INTERNAL_GROUP, tooltip = showInternalsTooltip)
+showInternalsInput              = input(        true,       'Show Internal Structure',  group = INTERNAL_GROUP)
 showInternalBullInput           = input.string( ALL,        'Bullish Structure',        group = INTERNAL_GROUP, inline = 'ibull', options = [ALL,BOS,CHOCH])
 internalBullColorInput          = input(        GREEN,      '',                         group = INTERNAL_GROUP, inline = 'ibull')
 showInternalBearInput           = input.string( ALL,        'Bearish Structure' ,       group = INTERNAL_GROUP, inline = 'ibear', options = [ALL,BOS,CHOCH])
 internalBearColorInput          = input(        RED,        '',                         group = INTERNAL_GROUP, inline = 'ibear')
-internalFilterConfluenceInput   = input(        false,      'Confluence Filter',        group = INTERNAL_GROUP, tooltip = internalFilterConfluenceTooltip)
+internalFilterConfluenceInput   = input(        false,      'Confluence Filter',        group = INTERNAL_GROUP)
 internalStructureSize           = input.string( TINY,       'Internal Label Size',      group = INTERNAL_GROUP, options = [TINY,SMALL,NORMAL])
 
-showStructureInput              = input(        true,       'Show Swing Structure',     group = SWING_GROUP,    tooltip = showStructureTooltip)
+showStructureInput              = input(        true,       'Show Swing Structure',     group = SWING_GROUP)
 showSwingBullInput              = input.string( ALL,        'Bullish Structure',        group = SWING_GROUP,    inline = 'bull',    options = [ALL,BOS,CHOCH])
 swingBullColorInput             = input(        GREEN,      '',                         group = SWING_GROUP,    inline = 'bull')
 showSwingBearInput              = input.string( ALL,        'Bearish Structure',        group = SWING_GROUP,    inline = 'bear',    options = [ALL,BOS,CHOCH])
 swingBearColorInput             = input(        RED,        '',                         group = SWING_GROUP,    inline = 'bear')
 swingStructureSize              = input.string( SMALL,      'Swing Label Size',         group = SWING_GROUP,    options = [TINY,SMALL,NORMAL])
-showSwingsInput                 = input(        false,      'Show Swings Points',       group = SWING_GROUP,    tooltip = showSwingsTooltip,inline = 'swings')
+showSwingsInput                 = input(        false,      'Show Swings Points',       group = SWING_GROUP,inline = 'swings')
 swingsLengthInputRaw            = input.int(    50,         '',                         group = SWING_GROUP,                    inline = 'swings')
 swingsLengthInput               = ensureMinInt(swingsLengthInputRaw, 10)
-showHighLowSwingsInput          = input(        true,       'Show Strong/Weak High/Low',group = SWING_GROUP,    tooltip = showHighLowSwingsTooltip)
+showHighLowSwingsInput          = input(        true,       'Show Strong/Weak High/Low',group = SWING_GROUP)
 
-showInternalOrderBlocksInput    = input(        true,       'Internal Order Blocks' ,   group = BLOCKS_GROUP,   tooltip = showInternalOrderBlocksTooltip,   inline = 'iob')
+showInternalOrderBlocksInput    = input(        true,       'Internal Order Blocks' ,   group = BLOCKS_GROUP,   inline = 'iob')
 internalOrderBlocksSizeInputRaw = input.int(    5,          '',                         group = BLOCKS_GROUP,                     inline = 'iob')
 internalOrderBlocksSizeInput    = clampInt(internalOrderBlocksSizeInputRaw, 1, 20)
-showSwingOrderBlocksInput       = input(        false,      'Swing Order Blocks',       group = BLOCKS_GROUP,   tooltip = showSwingOrderBlocksTooltip,      inline = 'ob')
+showSwingOrderBlocksInput       = input(        false,      'Swing Order Blocks',       group = BLOCKS_GROUP,      inline = 'ob')
 swingOrderBlocksSizeInputRaw    = input.int(    5,          '',                         group = BLOCKS_GROUP,                     inline = 'ob')
 swingOrderBlocksSizeInput       = clampInt(swingOrderBlocksSizeInputRaw, 1, 20)
-orderBlockFilterInput           = input.string( 'Atr',      'Order Block Filter',       group = BLOCKS_GROUP,   tooltip = orderBlockFilterTooltip,          options = [ATR, RANGE])
-orderBlockMitigationInput       = input.string( HIGHLOW,    'Order Block Mitigation',   group = BLOCKS_GROUP,   tooltip = orderBlockMitigationTooltip,      options = [CLOSE,HIGHLOW])
+orderBlockFilterInput           = input.string( 'Atr',      'Order Block Filter',       group = BLOCKS_GROUP,          options = [ATR, RANGE])
+orderBlockMitigationInput       = input.string( HIGHLOW,    'Order Block Mitigation',   group = BLOCKS_GROUP,      options = [CLOSE,HIGHLOW])
 internalBullishOrderBlockColor  = input.color(color.new(#3179f5, 80), 'Internal Bullish OB',    group = BLOCKS_GROUP)
 internalBearishOrderBlockColor  = input.color(color.new(#f77c80, 80), 'Internal Bearish OB',    group = BLOCKS_GROUP)
 swingBullishOrderBlockColor     = input.color(color.new(#1848cc, 80), 'Bullish OB',             group = BLOCKS_GROUP)
 swingBearishOrderBlockColor     = input.color(color.new(#b22833, 80), 'Bearish OB',             group = BLOCKS_GROUP)
 
-showEqualHighsLowsInput         = input(        true,       'Equal High/Low',           group = EQUAL_GROUP,    tooltip = showEqualHighsLowsTooltip)
-equalHighsLowsLengthInputRaw    = input.int(    3,          'Bars Confirmation',        group = EQUAL_GROUP,    tooltip = equalHighsLowsLengthTooltip)
+showEqualHighsLowsInput         = input(        true,       'Equal High/Low',           group = EQUAL_GROUP)
+equalHighsLowsLengthInputRaw    = input.int(    3,          'Bars Confirmation',        group = EQUAL_GROUP)
 equalHighsLowsLengthInput       = ensureMinInt(equalHighsLowsLengthInputRaw, 1)
-equalHighsLowsThresholdInputRaw = input.float(  0.1,        'Threshold',                group = EQUAL_GROUP,    tooltip = equalHighsLowsThresholdTooltip,   step = 0.1)
+equalHighsLowsThresholdInputRaw = input.float(  0.1,        'Threshold',                group = EQUAL_GROUP,   step = 0.1)
 equalHighsLowsThresholdInput    = clampFloat(equalHighsLowsThresholdInputRaw, 0.0, 0.5)
 equalHighsLowsSizeInput         = input.string( TINY,       'Label Size',               group = EQUAL_GROUP,    options = [TINY,SMALL,NORMAL])
 
-showFairValueGapsInput          = input(        false,      'Fair Value Gaps',          group = GAPS_GROUP,     tooltip = showFairValueGapsTooltip)
-fairValueGapsThresholdInput     = input(        true,       'Auto Threshold',           group = GAPS_GROUP,     tooltip = fairValueGapsThresholdTooltip)
-fairValueGapsTimeframeInput     = input.timeframe('',       'Timeframe',                group = GAPS_GROUP,     tooltip = fairValueGapsTimeframeTooltip)
+showFairValueGapsInput          = input(        false,      'Fair Value Gaps',          group = GAPS_GROUP)
+fairValueGapsThresholdInput     = input(        true,       'Auto Threshold',           group = GAPS_GROUP)
+fairValueGapsTimeframeInput     = input.timeframe('',       'Timeframe',                group = GAPS_GROUP)
 fairValueGapsBullColorInput     = input.color(color.new(#00ff68, 70), 'Bullish FVG' , group = GAPS_GROUP)
 fairValueGapsBearColorInput     = input.color(color.new(#ff0008, 70), 'Bearish FVG' , group = GAPS_GROUP)
-fairValueGapsExtendInputRaw     = input.int(    1,          'Extend FVG',               group = GAPS_GROUP,     tooltip = fairValueGapsExtendTooltip)
+fairValueGapsExtendInputRaw     = input.int(    1,          'Extend FVG',               group = GAPS_GROUP)
 fairValueGapsExtendInput        = nonNegativeInt(fairValueGapsExtendInputRaw)
 
 showDailyLevelsInput            = input(        false,      'Daily',    group = LEVELS_GROUP,   inline = 'daily')
@@ -2411,7 +2391,7 @@ showMonthlyLevelsInput          = input(        false,      'Monthly',   group =
 monthlyLevelsStyleInput         = input.string( SOLID,      '',         group = LEVELS_GROUP,   inline = 'monthly', options = [SOLID,DASHED,DOTTED])
 monthlyLevelsColorInput         = input(        BLUE,       '',         group = LEVELS_GROUP,   inline = 'monthly')
 
-showPremiumDiscountZonesInput   = input(        false,      'Premium/Discount Zones',   group = ZONES_GROUP , tooltip = showPremiumDiscountZonesTooltip)
+showPremiumDiscountZonesInput   = input(        false,      'Premium/Discount Zones',   group = ZONES_GROUP )
 premiumZoneColorInput           = input.color(  RED,        'Premium Zone',             group = ZONES_GROUP)
 equilibriumZoneColorInput       = input.color(  GRAY,       'Equilibrium Zone',         group = ZONES_GROUP)
 discountZoneColorInput          = input.color(  GREEN,      'Discount Zone',            group = ZONES_GROUP)
