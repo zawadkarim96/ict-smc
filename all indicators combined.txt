@@ -1,4 +1,4 @@
-//@version=5
+//@version=6
 indicator('ICT SMC All Indicators', 'ICTSMC-All', overlay=true, max_labels_count=500, max_lines_count=500, max_boxes_count=500, max_bars_back=5000)
 
 string group_ema22 = "EMA 22 Settings"
@@ -274,12 +274,12 @@ float utL50 = ta.lowest(low, 50)
 float utL10 = ta.lowest(low, 10)
 
 
-string emaTrendTf(string tf) =>
+emaTrendTf(string tf) =>
     float emaFast = request.security(syminfo.tickerid, tf, ta.ema(close, 9), barmerge.gaps_off, barmerge.lookahead_off)
     float emaSlow = request.security(syminfo.tickerid, tf, ta.ema(close, 21), barmerge.gaps_off, barmerge.lookahead_off)
     emaFast > emaSlow ? '🟢 BULL' : emaFast < emaSlow ? '🔴 BEAR' : '— FLAT'
 
-string trendStrHtF(string tf) => emaTrendTf(tf)
+trendStrHtF(string tf) => emaTrendTf(tf)
 
 utCalcVol() =>
     float _atr = ta.atr(14)
