@@ -318,6 +318,28 @@ user_text_color = input.string('blue', 'Text Color', options=['aqua', 'black', '
 user_label_size = input.string('normal', 'Text Size', options=['tiny', 'small', 'normal', 'large'])
 show_asian_session = input.bool(defval=true, title="Show Asian Session Box")
 
+updateRangeFillBox(box existing, bool visible, int left, int right, float top, float bottom, color fillColor) =>
+    box result = existing
+    if visible and not na(top) and not na(bottom)
+        if na(result)
+            result := box.new(left, top, right, bottom, xloc=xloc.bar_time, border_color=na, bgcolor=fillColor)
+        else
+            box.set_left(result, left)
+            box.set_right(result, right)
+            box.set_top(result, top)
+            box.set_bottom(result, bottom)
+            box.set_bgcolor(result, fillColor)
+            box.set_border_color(result, na)
+    else
+        if not na(result)
+            box.delete(result)
+        result := na
+    result
+
+var box asianRangeFillBox = na
+var box londonRangeFillBox = na
+var box nyRangeFillBox = na
+
 
 show_london_session = input.bool(defval=true, title="Show London Session Box")
 show_london_session_rng = input.bool(defval=true, title="Show London Session Range Pips")
@@ -754,14 +776,8 @@ if showAsianRange
 highRes = rth_high
 lowRes = rth_low
 
-lineColor = color.new(color.white,100)
-
-openRangeHigh = plot(timerange(timeframe.period, rth_fill_ses) and showAsianRange ? highRes : na, color=lineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
-openRangeLow = plot(timerange(timeframe.period, rth_fill_ses) and showAsianRange ? lowRes : na, color=lineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
+asianRangeFillBox := updateRangeFillBox(asianRangeFillBox, timerange(timeframe.period, rth_fill_ses) and showAsianRange, FromDate, ToDate, highRes, lowRes, color.new(color.blue, 90))
 bgcolor(timerange(timeframe.period, rth_ses) and showAsianRange ? color.new(color.silver, 100) : na, title="Asian Session Background Color")
-
-
-fill(openRangeHigh, openRangeLow, color=showAsianRange ? color.new(color.blue, 90) : na, title="Fill Asian Range Color")
 
 if (not inSession and inSession[1] and showAsianRange)
     sessionRange := ((rth_high[1]-rth_low[1])/(syminfo.mintick))/10
@@ -836,12 +852,9 @@ if (show_london_session and isValidResolution())
 londonHighRes = london_rth_high
 londonLowRes = london_rth_low
 
-LondonLineColor = color.new(color.white,100)
-
-londonOpenRangeHigh = plot(timerange(timeframe.period, london_rth_fill_ses) and show_london_session and isBelowHourValidResolution() ? londonHighRes : na, color=LondonLineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
-londonOpenRangeLow = plot(timerange(timeframe.period, london_rth_fill_ses) and show_london_session and isBelowHourValidResolution() ? londonLowRes : na, color=LondonLineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
+bool londonFillVisible = timerange(timeframe.period, london_rth_fill_ses) and show_london_session and isBelowHourValidResolution()
+londonRangeFillBox := updateRangeFillBox(londonRangeFillBox, londonFillVisible, LondonFromDate, LondonToDate, londonHighRes, londonLowRes, color.new(color.teal, 90))
 bgcolor(timerange(timeframe.period, london_rth_fill_ses) and show_london_session and isBelowHourValidResolution() ? color.new(color.silver, 100) : na, title="London Session Background Color")
-fill(londonOpenRangeHigh, londonOpenRangeLow, color=show_london_session and isBelowHourValidResolution() ? color.new(color.teal, 90) : na, title="Fill London Range Color")
 
 if show_london_session_rng and not inLondonSession and inLondonSession[1] and isBelowHourValidResolution()
     london_range := ((london_rth_high[1]-london_rth_low[1])/(syminfo.mintick))/10
@@ -911,12 +924,9 @@ if (show_ny_session and isValidResolution())
 nyHighRes = ny_rth_high
 nyLowRes = ny_rth_low
 
-NyLineColor = color.new(color.white,100)
-
-nyOpenRangeHigh = plot(timerange(timeframe.period, ny_rth_fill_ses) and show_ny_session and isBelowHourValidResolution() ? nyHighRes : na, color=NyLineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
-nyOpenRangeLow = plot(timerange(timeframe.period, ny_rth_fill_ses) and show_ny_session and isBelowHourValidResolution() ? nyLowRes : na, color=NyLineColor, style=plot.style_line, linewidth=1,  show_last=5, editable=false)
+bool nyFillVisible = timerange(timeframe.period, ny_rth_fill_ses) and show_ny_session and isBelowHourValidResolution()
+nyRangeFillBox := updateRangeFillBox(nyRangeFillBox, nyFillVisible, NyFromDate, NyToDate, nyHighRes, nyLowRes, color.new(color.silver, 90))
 bgcolor(timerange(timeframe.period, ny_rth_fill_ses) and show_ny_session and isBelowHourValidResolution() ? color.new(color.silver, 100) : na, title="New York Session Background Color")
-fill(nyOpenRangeHigh, nyOpenRangeLow, color=show_ny_session and isBelowHourValidResolution() ? color.new(color.silver, 90) : na, title="Fill New York Range Color")
 
 if show_ny_session_rng and not inNySession and inNySession[1] and isBelowHourValidResolution()
     ny_range := ((ny_rth_high[1]-ny_rth_low[1])/(syminfo.mintick))/10
@@ -1052,20 +1062,52 @@ utSrConflicts(value) =>
 
 bool utSrVisible = utModuleActive and utShowSrInput
 
-plot(utSrVisible and not utSrConflicts(utH1000) ? utH1000 : na, title='UT R1', color=close > utH1000 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
-plot(utSrVisible and not utSrConflicts(utH750) ? utH750 : na, title='UT R2', color=close > utH750 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
-plot(utSrVisible and not utSrConflicts(utH500) ? utH500 : na, title='UT R3', color=close > utH500 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
-plot(utSrVisible and not utSrConflicts(utH250) ? utH250 : na, title='UT R4', color=close > utH250 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
-plot(utSrVisible and not utSrConflicts(utH100) ? utH100 : na, title='UT R5', color=close > utH100 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
-plot(utSrVisible and not utSrConflicts(utH50) ? utH50 : na, title='UT R6', color=close > utH50 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
-plot(utSrVisible and not utSrConflicts(utH10) ? utH10 : na, title='UT R7', color=close > utH10 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
-plot(utSrVisible and not utSrConflicts(utL1000) ? utL1000 : na, title='UT S1', color=close > utL1000 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
-plot(utSrVisible and not utSrConflicts(utL750) ? utL750 : na, title='UT S2', color=close > utL750 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
-plot(utSrVisible and not utSrConflicts(utL500) ? utL500 : na, title='UT S3', color=close > utL500 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
-plot(utSrVisible and not utSrConflicts(utL250) ? utL250 : na, title='UT S4', color=close > utL250 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
-plot(utSrVisible and not utSrConflicts(utL100) ? utL100 : na, title='UT S5', color=close > utL100 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
-plot(utSrVisible and not utSrConflicts(utL50) ? utL50 : na, title='UT S6', color=close > utL50 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
-plot(utSrVisible and not utSrConflicts(utL10) ? utL10 : na, title='UT S7', color=close > utL10 ? color.green : color.red, linewidth=1, offset=-9999, trackprice=true)
+updateUtSrLine(line existing, bool visible, float price, color lineColor) =>
+    line updated = existing
+    if visible and not na(price)
+        if na(updated)
+            updated := line.new(bar_index - 1, price, bar_index, price, xloc=xloc.bar_index, extend=extend.right, color=lineColor, width=1)
+        else
+            line.set_xy1(updated, bar_index - 1, price)
+            line.set_xy2(updated, bar_index, price)
+            line.set_color(updated, lineColor)
+            line.set_width(updated, 1)
+            line.set_style(updated, line.style_solid)
+            line.set_extend(updated, extend.right)
+    else if not na(updated)
+        line.delete(updated)
+        updated := na
+    updated
+
+var line utSrLineH1000 = na
+var line utSrLineH750 = na
+var line utSrLineH500 = na
+var line utSrLineH250 = na
+var line utSrLineH100 = na
+var line utSrLineH50 = na
+var line utSrLineH10 = na
+var line utSrLineL1000 = na
+var line utSrLineL750 = na
+var line utSrLineL500 = na
+var line utSrLineL250 = na
+var line utSrLineL100 = na
+var line utSrLineL50 = na
+var line utSrLineL10 = na
+
+utSrLineH1000 := updateUtSrLine(utSrLineH1000, utSrVisible and not utSrConflicts(utH1000), utH1000, close > utH1000 ? color.green : color.red)
+utSrLineH750 := updateUtSrLine(utSrLineH750, utSrVisible and not utSrConflicts(utH750), utH750, close > utH750 ? color.green : color.red)
+utSrLineH500 := updateUtSrLine(utSrLineH500, utSrVisible and not utSrConflicts(utH500), utH500, close > utH500 ? color.green : color.red)
+utSrLineH250 := updateUtSrLine(utSrLineH250, utSrVisible and not utSrConflicts(utH250), utH250, close > utH250 ? color.green : color.red)
+utSrLineH100 := updateUtSrLine(utSrLineH100, utSrVisible and not utSrConflicts(utH100), utH100, close > utH100 ? color.green : color.red)
+utSrLineH50 := updateUtSrLine(utSrLineH50, utSrVisible and not utSrConflicts(utH50), utH50, close > utH50 ? color.green : color.red)
+utSrLineH10 := updateUtSrLine(utSrLineH10, utSrVisible and not utSrConflicts(utH10), utH10, close > utH10 ? color.green : color.red)
+utSrLineL1000 := updateUtSrLine(utSrLineL1000, utSrVisible and not utSrConflicts(utL1000), utL1000, close > utL1000 ? color.green : color.red)
+utSrLineL750 := updateUtSrLine(utSrLineL750, utSrVisible and not utSrConflicts(utL750), utL750, close > utL750 ? color.green : color.red)
+utSrLineL500 := updateUtSrLine(utSrLineL500, utSrVisible and not utSrConflicts(utL500), utL500, close > utL500 ? color.green : color.red)
+utSrLineL250 := updateUtSrLine(utSrLineL250, utSrVisible and not utSrConflicts(utL250), utL250, close > utL250 ? color.green : color.red)
+utSrLineL100 := updateUtSrLine(utSrLineL100, utSrVisible and not utSrConflicts(utL100), utL100, close > utL100 ? color.green : color.red)
+utSrLineL50 := updateUtSrLine(utSrLineL50, utSrVisible and not utSrConflicts(utL50), utL50, close > utL50 ? color.green : color.red)
+utSrLineL10 := updateUtSrLine(utSrLineL10, utSrVisible and not utSrConflicts(utL10), utL10, close > utL10 ? color.green : color.red)
 
 
 
@@ -2901,10 +2943,13 @@ plotshape(utPlotSellShape, title='UT Sell', style=shape.labeldown, location=loca
 plot(utTrailBuyPlotValue, title='UT Bot Buy Trail', color=color.new(color.green, 0), linewidth=1)
 plot(utTrailSellPlotValue, title='UT Bot Sell Trail', color=color.new(color.red, 0), linewidth=1)
 plot(utSignalPlotValue, color=color.blue, linewidth=2, title='LinReg Signal')
-plotcandle(open=utInLong ? utLinRegOpenSeries : na, high=utInLong ? utLinRegHighSeries : na, low=utInLong ? utLinRegLowSeries : na, close=utInLong ? utLinRegCloseSeries : na, title='LinReg Long (regime)', color=color.green, wickcolor=color.green, bordercolor=color.green)
-plotcandle(open=utInShort ? utLinRegOpenSeries : na, high=utInShort ? utLinRegHighSeries : na, low=utInShort ? utLinRegLowSeries : na, close=utInShort ? utLinRegCloseSeries : na, title='LinReg Short (regime)', color=color.red, wickcolor=color.red, bordercolor=color.red)
-plotcandle(open=utIsFlat and utDirUp ? utLinRegOpenSeries : na, high=utIsFlat and utDirUp ? utLinRegHighSeries : na, low=utIsFlat and utDirUp ? utLinRegLowSeries : na, close=utIsFlat and utDirUp ? utLinRegCloseSeries : na, title='LinReg Flat Green', color=color.green, wickcolor=color.green, bordercolor=color.green)
-plotcandle(open=utIsFlat and not utDirUp ? utLinRegOpenSeries : na, high=utIsFlat and not utDirUp ? utLinRegHighSeries : na, low=utIsFlat and not utDirUp ? utLinRegLowSeries : na, close=utIsFlat and not utDirUp ? utLinRegCloseSeries : na, title='LinReg Flat Red', color=color.red, wickcolor=color.red, bordercolor=color.red)
+bool utLinRegCandleVisible = utModuleActive and (utInLong or utInShort or utIsFlat)
+float utLinRegOpenPlot = utLinRegCandleVisible ? utLinRegOpenSeries : na
+float utLinRegHighPlot = utLinRegCandleVisible ? utLinRegHighSeries : na
+float utLinRegLowPlot = utLinRegCandleVisible ? utLinRegLowSeries : na
+float utLinRegClosePlot = utLinRegCandleVisible ? utLinRegCloseSeries : na
+color utLinRegCandleColor = utInLong ? color.green : utInShort ? color.red : utIsFlat ? (utDirUp ? color.green : color.red) : na
+plotcandle(open=utLinRegOpenPlot, high=utLinRegHighPlot, low=utLinRegLowPlot, close=utLinRegClosePlot, title='LinReg Regime', color=utLinRegCandleColor, wickcolor=utLinRegCandleColor, bordercolor=utLinRegCandleColor)
 
 alertcondition(utBuyAlertCondition, title='UT Long', message='UT Long')
 alertcondition(utSellAlertCondition, title='UT Short', message='UT Short')
