@@ -3298,21 +3298,25 @@ ensureTraceLine(line current, int x1, float y1, int x2, float y2, color lineColo
     result
 
 
+refreshTraceLabel(label target, int x, float y, string textValue) =>
+    if not na(target)
+        label.set_xy(target, x, y)
+        label.set_text(target, textValue)
+        label.set_textcolor(target, settings.label_color)
+        label.set_size(target, settings.label_size)
+        label.set_style(target, label.style_label_left)
+        label.set_textalign(target, text.align_center)
+    target
+
+
 ensureTraceLabel(label current, int x, float y, string textValue) =>
-      label result = current
-      if na(result)
-          result := label.new(x, y, textValue, textalign = text.align_center, style = label.style_label_left, size = settings.label_size, color = color_transparent, textcolor = settings.label_color)
-      else
-          label.set_xy(result, x, y)
-          label.set_text(result, textValue)
-          label.set_textcolor(result, settings.label_color)
-          label.set_size(result, settings.label_size)
-          label.set_style(result, label.style_label_left)
-          label.set_textalign(result, text.align_center)
-      result
+    label result = current
+    if na(result)
+        result := label.new(x, y, textValue, textalign = text.align_center, style = label.style_label_left, size = settings.label_size, color = color_transparent, textcolor = settings.label_color)
+    result := refreshTraceLabel(result, x, y, textValue)
 
 shouldShowTrace(int processedCount, int lastEnabled) =>
-      (settings.trace_anchor == 'First Timeframe' and processedCount == 0) or (settings.trace_anchor == 'Last Timeframe' and (settings.max_sets == 1 or processedCount == lastEnabled - 1))
+    (settings.trace_anchor == 'First Timeframe' and processedCount == 0) or (settings.trace_anchor == 'Last Timeframe' and (settings.max_sets == 1 or processedCount == lastEnabled - 1))
 
 
 method DayofWeek(Helper helper, int index) =>
