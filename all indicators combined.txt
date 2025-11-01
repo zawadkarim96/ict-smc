@@ -3716,78 +3716,18 @@ int cnt = 0
 int last = helper.HTFEnabled()
 
 int offset = settings.offset
-if htf1.settings.show and helper.ValidTimeframe(htf1.settings.htf)
-    bool showTrace = false
-    if settings.trace_anchor == 'First Timeframe'
-        showTrace := true
-        showTrace
-    if settings.trace_anchor == 'Last Timeframe' and settings.max_sets == 1
-        showTrace := true
-        showTrace
-    htf1.UpdateTime(offset)
-    htf1.Monitor().Update(offset, showTrace).FindImbalance()
-    cnt := cnt + 1
-    offset := offset + (cnt > 0 ? htf1.candles.size() * settings.width + (htf1.candles.size() > 0 ? (htf1.candles.size() - 1) * settings.buffer : 0) + settings.htf_buffer : 0)
-    offset
-if htf2.settings.show and helper.ValidTimeframe(htf2.settings.htf) and cnt < last
-    bool showTrace = false
-    if settings.trace_anchor == 'First Timeframe' and cnt == 0
-        showTrace := true
-        showTrace
-    if settings.trace_anchor == 'Last Timeframe' and cnt == last - 1
-        showTrace := true
-        showTrace
-    htf2.UpdateTime(offset)
-    htf2.Monitor().Update(offset, showTrace).FindImbalance()
-    cnt := cnt + 1
-    offset := offset + (cnt > 0 ? htf2.candles.size() * settings.width + (htf2.candles.size() > 0 ? (htf2.candles.size() - 1) * settings.buffer : 0) + settings.htf_buffer : 0)
-    offset
-if htf3.settings.show and helper.ValidTimeframe(htf3.settings.htf) and cnt < last
-    bool showTrace = false
-    if settings.trace_anchor == 'First Timeframe' and cnt == 0
-        showTrace := true
-        showTrace
-    if settings.trace_anchor == 'Last Timeframe' and cnt == last - 1
-        showTrace := true
-        showTrace
-    htf3.UpdateTime(offset)
-    htf3.Monitor().Update(offset, showTrace).FindImbalance()
-    cnt := cnt + 1
-    offset := offset + (cnt > 0 ? htf3.candles.size() * settings.width + (htf3.candles.size() > 0 ? (htf3.candles.size() - 1) * settings.buffer : 0) + settings.htf_buffer : 0)
-    offset
-if htf4.settings.show and helper.ValidTimeframe(htf4.settings.htf) and cnt < last
-    bool showTrace = false
-    if settings.trace_anchor == 'First Timeframe' and cnt == 0
-        showTrace := true
-        showTrace
-    if settings.trace_anchor == 'Last Timeframe' and cnt == last - 1
-        showTrace := true
-        showTrace
-    htf4.UpdateTime(offset)
-    htf4.Monitor().Update(offset, showTrace).FindImbalance()
-    cnt := cnt + 1
-    offset := offset + (cnt > 0 ? htf4.candles.size() * settings.width + (htf4.candles.size() > 0 ? (htf4.candles.size() - 1) * settings.buffer : 0) + settings.htf_buffer : 0)
-    offset
-if htf5.settings.show and helper.ValidTimeframe(htf5.settings.htf) and cnt < last
-    bool showTrace = false
-    if settings.trace_anchor == 'First Timeframe' and cnt == 0
-        showTrace := true
-        showTrace
-    if settings.trace_anchor == 'Last Timeframe' and cnt == last - 1
-        showTrace := true
-        showTrace
-    htf5.UpdateTime(offset)
-    htf5.Monitor().Update(offset, showTrace).FindImbalance()
-    cnt := cnt + 1
-    offset := offset + (cnt > 0 ? htf5.candles.size() * settings.width + (htf5.candles.size() > 0 ? (htf5.candles.size() - 1) * settings.buffer : 0) + settings.htf_buffer : 0)
-    offset
-if htf6.settings.show and helper.ValidTimeframe(htf6.settings.htf) and cnt < last
-    bool showTrace = false
-    if settings.trace_anchor == 'First Timeframe' and cnt == 0
-        showTrace := true
-        showTrace
-    if settings.trace_anchor == 'Last Timeframe'
-        showTrace := true
-        showTrace
-    htf6.UpdateTime(offset)
-    htf6.Monitor().Update(offset, showTrace).FindImbalance()
+var CandleSet[] htfSets = array.from(htf1, htf2, htf3, htf4, htf5, htf6)
+
+for i = 0 to array.size(htfSets) - 1 by 1
+    CandleSet htf = array.get(htfSets, i)
+    CandleSet monitored = htf.Monitor()
+    bool canProcess = monitored.settings.show and helper.ValidTimeframe(monitored.settings.htf) and cnt < last
+    if canProcess
+        bool showTrace = settings.trace_anchor == 'First Timeframe' and cnt == 0
+        if settings.trace_anchor == 'Last Timeframe' and (settings.max_sets == 1 or cnt == last - 1)
+            showTrace := true
+        monitored.UpdateTime(offset)
+        monitored.Update(offset, showTrace).FindImbalance()
+        cnt := cnt + 1
+        int candleCount = monitored.candles.size()
+        offset := offset + (cnt > 0 ? candleCount * settings.width + (candleCount > 0 ? (candleCount - 1) * settings.buffer : 0) + settings.htf_buffer : 0)
