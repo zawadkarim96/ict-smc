@@ -3277,42 +3277,45 @@ var Trace trace = Trace.new()
 color color_transparent = #ffffff00
 
 
-line ensureTraceLine(line current, int x1, float y1, int x2, float y2, color lineColor, string styleSetting, int widthSetting) =>
-    lineStyleValue = helper.LineStyle(styleSetting)
-    if na(current)
-        current := line.new(x1, y1, x2, y2, xloc = xloc.bar_index, color = lineColor, style = lineStyleValue, width = widthSetting)
-    else
-        line.set_xy1(current, x1, y1)
-        line.set_xy2(current, x2, y2)
-        line.set_color(current, lineColor)
-        line.set_style(current, lineStyleValue)
-        line.set_width(current, widthSetting)
-    current
-
-
-label ensureTraceLabel(label current, float x, float y, string textValue) =>
-    if na(current)
-        current := label.new(x, y, textValue, textalign = text.align_center, style = label.style_label_left, size = settings.label_size, color = color_transparent, textcolor = settings.label_color)
-    else
-        label.set_xy(current, x, y)
-        label.set_text(current, textValue)
-        label.set_textcolor(current, settings.label_color)
-        label.set_size(current, settings.label_size)
-        label.set_style(current, label.style_label_left)
-        label.set_textalign(current, text.align_center)
-    current
-
-bool shouldShowTrace(int processedCount, int lastEnabled) =>
-    (settings.trace_anchor == 'First Timeframe' and processedCount == 0) or (settings.trace_anchor == 'Last Timeframe' and (settings.max_sets == 1 or processedCount == lastEnabled - 1))
-
-
 method LineStyle(Helper helper, string style) =>
-    helper.name := style
-    out = switch style
-        '----' => line.style_dashed
-        '····' => line.style_dotted
-        => line.style_solid
-    out
+      helper.name := style
+      out = switch style
+          '----' => line.style_dashed
+          '····' => line.style_dotted
+          => line.style_solid
+      out
+
+
+ensureTraceLine(line current, int x1, float y1, int x2, float y2, color lineColor, string styleSetting, int widthSetting) =>
+      line result = current
+      lineStyleValue = helper.LineStyle(styleSetting)
+      if na(result)
+          result := line.new(x1, y1, x2, y2, xloc = xloc.bar_index, color = lineColor, style = lineStyleValue, width = widthSetting)
+      else
+          line.set_xy1(result, x1, y1)
+          line.set_xy2(result, x2, y2)
+          line.set_color(result, lineColor)
+          line.set_style(result, lineStyleValue)
+          line.set_width(result, widthSetting)
+      result
+
+
+ensureTraceLabel(label current, int x, float y, string textValue) =>
+      label result = current
+      if na(result)
+          result := label.new(x, y, textValue, textalign = text.align_center, style = label.style_label_left, size = settings.label_size, color = color_transparent, textcolor = settings.label_color)
+      else
+          label.set_xy(result, x, y)
+          label.set_text(result, textValue)
+          label.set_textcolor(result, settings.label_color)
+          label.set_size(result, settings.label_size)
+          label.set_style(result, label.style_label_left)
+          label.set_textalign(result, text.align_center)
+      result
+
+shouldShowTrace(int processedCount, int lastEnabled) =>
+      (settings.trace_anchor == 'First Timeframe' and processedCount == 0) or (settings.trace_anchor == 'Last Timeframe' and (settings.max_sets == 1 or processedCount == lastEnabled - 1))
+
 
 method DayofWeek(Helper helper, int index) =>
     helper.name := 'DOW'
@@ -3675,22 +3678,22 @@ method Update(CandleSet candleSet, int offset, bool showTrace) =>
                 if bar_index - candle.o_idx < 5000
                     trace.o := ensureTraceLine(trace.o, candle.o_idx, candle.o, box.get_left(candle.body), candle.o, settings.trace_o_color, settings.trace_o_style, settings.trace_o_size)
                     if settings.label_show
-                        trace.o_l := ensureTraceLabel(trace.o_l, box.get_right(candle.body), candle.o, str.tostring(candle.o))
+                        trace.o_l := ensureTraceLabel(trace.o_l, int(math.round(box.get_right(candle.body))), candle.o, str.tostring(candle.o))
 
                 if bar_index - candle.c_idx < 5000
                     trace.c := ensureTraceLine(trace.c, candle.c_idx, candle.c, box.get_left(candle.body), candle.c, settings.trace_c_color, settings.trace_c_style, settings.trace_c_size)
                     if settings.label_show
-                        trace.c_l := ensureTraceLabel(trace.c_l, box.get_right(candle.body), candle.c, str.tostring(candle.c))
+                        trace.c_l := ensureTraceLabel(trace.c_l, int(math.round(box.get_right(candle.body))), candle.c, str.tostring(candle.c))
 
                 if bar_index - candle.h_idx < 5000
                     trace.h := ensureTraceLine(trace.h, candle.h_idx, candle.h, line.get_x1(candle.wick_up), candle.h, settings.trace_h_color, settings.trace_h_style, settings.trace_h_size)
                     if settings.label_show
-                        trace.h_l := ensureTraceLabel(trace.h_l, box.get_right(candle.body), candle.h, str.tostring(candle.h))
+                        trace.h_l := ensureTraceLabel(trace.h_l, int(math.round(box.get_right(candle.body))), candle.h, str.tostring(candle.h))
 
                 if bar_index - candle.l_idx < 5000
                     trace.l := ensureTraceLine(trace.l, candle.l_idx, candle.l, line.get_x1(candle.wick_down), candle.l, settings.trace_l_color, settings.trace_l_style, settings.trace_l_size)
                     if settings.label_show
-                        trace.l_l := ensureTraceLabel(trace.l_l, box.get_right(candle.body), candle.l, str.tostring(candle.l))
+                        trace.l_l := ensureTraceLabel(trace.l_l, int(math.round(box.get_right(candle.body))), candle.l, str.tostring(candle.l))
     candleSet
 
 int cnt = 0
