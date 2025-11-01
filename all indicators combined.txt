@@ -1,4 +1,4 @@
-//@version=6
+//@version=5
 indicator('ICT SMC All Indicators', 'ICTSMC-All', overlay=true, max_labels_count=500, max_lines_count=500, max_boxes_count=500, max_bars_back=5000)
 
 string group_ema22 = "EMA 22 Settings"
@@ -274,12 +274,12 @@ float utL50 = ta.lowest(low, 50)
 float utL10 = ta.lowest(low, 10)
 
 
-emaTrendTf(tf) =>
+string emaTrendTf(string tf) =>
     float emaFast = request.security(syminfo.tickerid, tf, ta.ema(close, 9), barmerge.gaps_off, barmerge.lookahead_off)
     float emaSlow = request.security(syminfo.tickerid, tf, ta.ema(close, 21), barmerge.gaps_off, barmerge.lookahead_off)
     emaFast > emaSlow ? '🟢 BULL' : emaFast < emaSlow ? '🔴 BEAR' : '— FLAT'
 
-trendStrHtF(tf) => emaTrendTf(tf)
+string trendStrHtF(string tf) => emaTrendTf(tf)
 
 utCalcVol() =>
     float _atr = ta.atr(14)
@@ -665,11 +665,11 @@ else
 
 
 
-open_bar(ses) =>
+open_bar(string ses) =>
     t = time("D", ses)
     na(t[1]) and not na(t) or t[1] < t
 
-is_open(ses) =>
+is_open(string ses) =>
     not na(time(timeframe.period, ses))
 
 
@@ -680,20 +680,20 @@ is_new_day() =>
     syminfo.timezone == "Etc/UTC" and hour == 0 and minute == 0 ? true : syminfo.timezone != "Etc/UTC" and hour == 20 and minute == 0 ? true : false
 
 
-get_label_offset(session) =>
+get_label_offset() =>
     (timeframe.period == "1") ? time[180] : (timeframe.period == "3") ? time[60] : (timeframe.period == "5") ? time[36] : (timeframe.period == "15") ? time[12] : (timeframe.period == "60") ? time[3] : time[12]
 
 is_new_day_switch_period() =>
     (hour >= 20 and minute == 0) and (hour <= 23 and minute <= 59) ? true: false
 
 
-timerange(res, sess) => not na(time(res, sess))
+timerange(string res, string sess) => not na(time(res, sess))
 
 
-adr(length) =>
+adr(int length) =>
     barRange = high - low
     ta.sma(barRange[1], length)
-to_pips(val) =>
+to_pips(float val) =>
     is_forex_pips ? math.round(val/syminfo.mintick/10) : math.round(val/syminfo.mintick)
 
 
@@ -781,7 +781,7 @@ bgcolor(timerange(timeframe.period, rth_ses) and showAsianRange ? color.new(colo
 
 if (not inSession and inSession[1] and showAsianRange)
     sessionRange := ((rth_high[1]-rth_low[1])/(syminfo.mintick))/10
-    labelTime = get_label_offset(inSession)
+    labelTime = get_label_offset()
 
     label.delete(sessionRangeLabel)
     if ((timeframe.isintraday or timeframe.isdaily) and showADR and (timenow - time) < (one_day * daily_adr))
@@ -858,7 +858,7 @@ bgcolor(timerange(timeframe.period, london_rth_fill_ses) and show_london_session
 
 if show_london_session_rng and not inLondonSession and inLondonSession[1] and isBelowHourValidResolution()
     london_range := ((london_rth_high[1]-london_rth_low[1])/(syminfo.mintick))/10
-    londonLabelTime = get_label_offset(inLondonSession)
+    londonLabelTime = get_label_offset()
 
     label.delete(londonRangeLabel)
     londonRangeLabel := label.new(londonLabelTime, london_rth_low[1], "L = " + str.tostring(london_range), xloc.bar_time, yloc.price, color.new(color.black,100), label.style_label_up, ltext_color, llabelsize)
@@ -930,7 +930,7 @@ bgcolor(timerange(timeframe.period, ny_rth_fill_ses) and show_ny_session and isB
 
 if show_ny_session_rng and not inNySession and inNySession[1] and isBelowHourValidResolution()
     ny_range := ((ny_rth_high[1]-ny_rth_low[1])/(syminfo.mintick))/10
-    nyLabelTime = get_label_offset(inNySession)
+    nyLabelTime = get_label_offset()
 
     label.delete(nyRangeLabel)
     nyRangeLabel := label.new(nyLabelTime, ny_rth_low[1], "N = " + str.tostring(ny_range), xloc.bar_time, yloc.price, color.new(color.black,100), label.style_label_up, ntext_color, nlabelsize)
@@ -938,7 +938,7 @@ if show_ny_session_rng and not inNySession and inNySession[1] and isBelowHourVal
 
 
 
-getData(r, s) => request.security(syminfo.tickerid, r, s, barmerge.gaps_off, barmerge.lookahead_on)
+getData(string r, float s) => request.security(syminfo.tickerid, r, s, barmerge.gaps_off, barmerge.lookahead_on)
 
 pdh = getData('D', high[1])
 pdl = getData('D', low[1])
@@ -1048,9 +1048,9 @@ if (showLastWeeklyHiLo and isBelowHourValidResolution())
         label.delete(lwkLow_label[1])
 
 utSrTolerance() => math.max(math.max(syminfo.mintick, 1e-10) * 2.0, 1e-10)
-utSrMatches(value, reference) => not na(value) and not na(reference) and math.abs(value - reference) <= utSrTolerance()
+utSrMatches(float value, float reference) => not na(value) and not na(reference) and math.abs(value - reference) <= utSrTolerance()
 
-utSrConflicts(value) =>
+utSrConflicts(float value) =>
     conflict = false
     if showPreviousDayHiLo and isBelowHourValidResolution()
         conflict := conflict or utSrMatches(value, pdh) or utSrMatches(value, pdl)
@@ -1167,7 +1167,10 @@ if (inTradableSession and close[1] <= rth_high and close > rth_high)
 
 alertcondition((isCloseBelow or isCloseAbove), title='Asian Range Break', message='Price has closed outside the Asian Session Range.')
 
-f_print(_txt) => var label _lbl = na, label.delete(_lbl), _lbl := label.new(time + (time-time[1])*3, high, _txt, xloc.bar_time, yloc.price, size = size.large)
+f_print(string _txt) =>
+    var label _lbl = na
+    label.delete(_lbl)
+    _lbl := label.new(time + (time-time[1])*3, high, _txt, xloc=xloc.bar_time, yloc=yloc.price, size=size.large)
 
 
 const string o          = 'Options'
@@ -1428,34 +1431,34 @@ method clear_aLabLin(line[] l) =>
 
 method notransp(color css) => color.rgb(color.r(css), color.g(css), color.b(css))
 
-method display(ob id, css, break_css, str)=>
+method display(ob id, color css, color break_css, string dir)=>
     if showOB
         if id.breaker
             a_bx_ln_lb.unshift(
              bx_ln_lb.new(
-               box.new(id.loc, id.top, timenow + (tf_msec * 10), id.btm, na
-             , bgcolor = break_css
-             , extend  = extend.none
-             , xloc    = xloc.bar_time)
-             , na
-             , na)
-             )
+                box.new(id.loc, id.top, timenow + (tf_msec * 10), id.btm, na
+            , bgcolor = break_css
+            , extend  = extend.none
+            , xloc    = xloc.bar_time)
+            , na
+            , na)
+            )
         else
-            y  = str == 'bl' ? id.btm : id.top
-            s  = str == 'bl' ? label.style_label_up : label.style_label_down
+            y  = dir == 'bl' ? id.btm : id.top
+            s  = dir == 'bl' ? label.style_label_up : label.style_label_down
             a_bx_ln_lb.unshift(
              bx_ln_lb.new(
-               na
-             , line.new(id.loc,   y  , id.loc  + (tf_msec * 10),    y
-             , xloc    = xloc.bar_time, color=css, width=2)
-             , label.new(              id.loc  + (tf_msec * 10),    y
-             , text  = str == 'bl' ? '+OB' : '-OB'
-             , xloc  = xloc.bar_time
-             , style = s    , color = na
-             , textcolor=css, size  = size.small))
-             )
+                na
+              , line.new(id.loc,   y  , id.loc  + (tf_msec * 10),    y
+              , xloc    = xloc.bar_time, color=css, width=2)
+              , label.new(              id.loc  + (tf_msec * 10),    y
+              , text  = dir == 'bl' ? '+OB' : '-OB'
+              , xloc  = xloc.bar_time
+              , style = s    , color = na
+              , textcolor=css, size  = size.small))
+            )
 
-swings(len)=>
+swings(int len)=>
     var os = 0
     var swing top = swing.new(na, na)
     var swing btm = swing.new(na, na)
@@ -1467,23 +1470,23 @@ swings(len)=>
        :  low [len] < lower ? 1 : os
 
     if os == 0 and os[1] != 0
-        top := swing.new(high[length], bar_index[length])
+        top := swing.new(high[len], bar_index[len])
 
     if os == 1 and os[1] != 1
-        btm := swing.new(low[length], bar_index[length])
+        btm := swing.new(low[len], bar_index[len])
 
     [top, btm]
 
-set_lab(i, str) =>
-    style = str == 'Bl' ? label.style_label_down : label.style_label_up
-    txcol = str == 'Bl' ? color.lime : color.red
+set_lab(int i, string dir) =>
+    style = dir == 'Bl' ? label.style_label_down : label.style_label_up
+    txcol = dir == 'Bl' ? color.lime : color.red
     label.new(math.round((aZZ.x.get(i) + n) / 2), aZZ.y.get(i), text='BOS'
      , style=style, color=na, textcolor=txcol, size=size.tiny)
-set_lin(i, str) =>
-    color = str == 'Bl' ? color.lime : color.red
+set_lin(int i, string dir) =>
+    color = dir == 'Bl' ? color.lime : color.red
     line.new(aZZ.x.get(i), aZZ.y.get(i), n, aZZ.y.get(i), color=color, style=line.style_dotted)
 
-draw(left, col) =>
+draw(int left, color col) =>
     max_bars_back(time, 1000)
     var int dir= na, var int x1= na, var float y1= na, var int x2= na, var float y2= na
     sz       = aZZ.d.size( )
@@ -2675,7 +2678,7 @@ displayStructure(bool internal = false) =>
         if (internal and showInternalOrderBlocksInput) or (not internal and showSwingOrderBlocksInput)
             storeOrdeBlock(p_ivot,internal,BEARISH)
 
-fairValueGapBox(leftTime,rightTime,topPrice,bottomPrice,boxColor) => box.new(chart.point.new(leftTime,na,topPrice),chart.point.new(rightTime + fairValueGapsExtendInput * (time-time[1]),na,bottomPrice), xloc=xloc.bar_time, border_color = boxColor, bgcolor = boxColor)
+fairValueGapBox(int leftTime, int rightTime, float topPrice, float bottomPrice, color boxColor) => box.new(chart.point.new(leftTime, na, topPrice), chart.point.new(rightTime + fairValueGapsExtendInput * (time-time[1]), na, bottomPrice), xloc=xloc.bar_time, border_color=boxColor, bgcolor=boxColor)
 
 deleteFairValueGaps() =>
     for [index,eachFairValueGap] in fairValueGaps
@@ -3240,7 +3243,7 @@ ensureTraceLabel(label current, int x, float y, string textValue) =>
         result := label.new(x, y, textValue, textalign = text.align_center, style = label.style_label_left, size = settings.label_size, color = color_transparent, textcolor = settings.label_color)
     result := refreshTraceLabel(result, x, y, textValue)
 
-updateLabelRef(label current, float x, float y, string textValue, color textColor, string sizeValue, styleValue) =>
+updateLabelRef(label current, float x, float y, string textValue, color textColor, size sizeValue, label.style styleValue) =>
     int xInt = int(math.round(x))
     label result = current
     if na(result)
@@ -3658,11 +3661,12 @@ string htfSecondaryTfInput = input.string('W', 'Secondary Bias Timeframe', optio
 string htfCorrelationSymbolInput = input.string('DXY', 'Correlation Symbol (SMT)', group = htfGroup)
 int htfSwingLookbackInput = input.int(10, 'Structure Lookback', minval = 3, maxval = 50, group = htfGroup)
 
-float getEma(series float src, int len) => len > 0 ? ta.ema(src, len) : src
+getEma(float src, int len) => len > 0 ? ta.ema(src, len) : src
 
-string biasLabel(float fast, float slow) => fast > slow ? 'Bullish' : fast < slow ? 'Bearish' : 'Neutral'
+biasLabel(float fast, float slow) => fast > slow ? 'Bullish' : fast < slow ? 'Bearish' : 'Neutral'
 
-color biasColor(string biasText) => biasText == 'Bullish' ? color.new(color.green, 0) : biasText == 'Bearish' ? color.new(color.red, 0) : color.new(color.orange, 0)
+biasColor(string biasText) =>
+    biasText == 'Bullish' ? color.new(color.green, 0) : biasText == 'Bearish' ? color.new(color.red, 0) : color.new(color.orange, 0)
 
 float primaryCloseSeries = request.security(syminfo.tickerid, htfPrimaryTfInput, close)
 float primaryHighSeries = request.security(syminfo.tickerid, htfPrimaryTfInput, high)
