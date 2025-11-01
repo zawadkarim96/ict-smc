@@ -3278,17 +3278,12 @@ color color_transparent = #ffffff00
 
 
 lineStyleFromSetting(string styleName) =>
-    line_style lineStyle = line.style_solid
-    if styleName == '----'
-        lineStyle := line.style_dashed
-    else if styleName == '····'
-        lineStyle := line.style_dotted
-    lineStyle
+    styleName == '----' ? line.style_dashed : styleName == '····' ? line.style_dotted : line.style_solid
 
 
 ensureTraceLine(line current, int x1, float y1, int x2, float y2, color lineColor, string styleSetting, int widthSetting) =>
       line result = current
-      line_style lineStyleValue = lineStyleFromSetting(styleSetting)
+      lineStyleValue = lineStyleFromSetting(styleSetting)
       if na(result)
           result := line.new(x1, y1, x2, y2, xloc = xloc.bar_index, color = lineColor, style = lineStyleValue, width = widthSetting)
       else
